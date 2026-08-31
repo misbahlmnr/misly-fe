@@ -1,0 +1,126 @@
+"use client";
+
+import {
+  BarChart3,
+  EyeOff,
+  MoreHorizontal,
+  Pencil,
+  QrCode,
+  Trash2,
+} from "lucide-react";
+import { useState } from "react";
+
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLink,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { dashboardLinkPath } from "@/config/routes";
+import { isProPlan } from "@/config/user";
+import { useDeleteLink } from "../hooks/use-delete-link";
+
+const triggerClass =
+  "inline-flex items-center justify-center rounded-md bg-tertiary-fixed p-2 ink-border btn-hard-shadow-sm hover:bg-surface";
+
+interface LinkActionsProps {
+  slug: string;
+  linkId: string;
+  title: string;
+}
+
+export function LinkActions({ slug, linkId, title }: LinkActionsProps) {
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const deleteLink = useDeleteLink();
+
+  function handleConfirmDelete() {
+    deleteLink.mutate(linkId, {
+      onSuccess: () => setConfirmOpen(false),
+    });
+  }
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger title="More" className={triggerClass}>
+          <MoreHorizontal className="size-5" strokeWidth={2.25} />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem>
+            <Pencil className="size-4" strokeWidth={2.25} />
+            Edit
+          </DropdownMenuItem>
+          {isProPlan() ? (
+            <DropdownMenuLink href={dashboardLinkPath(slug)}>
+              <span className="flex flex-1 items-center gap-2">
+                <BarChart3 className="size-4" strokeWidth={2.25} />
+                Analytics
+              </span>
+              <span className="rounded-sm border border-on-surface bg-tertiary-fixed px-1.5 py-0.5 text-[10px] font-bold text-on-tertiary-fixed">
+                PRO
+              </span>
+            </DropdownMenuLink>
+          ) : (
+            <DropdownMenuItem disabled>
+              <span className="flex flex-1 items-center gap-2">
+                <BarChart3 className="size-4" strokeWidth={2.25} />
+                Analytics
+              </span>
+              <span className="rounded-sm border border-on-surface bg-tertiary-fixed px-1.5 py-0.5 text-[10px] font-bold text-on-tertiary-fixed">
+                PRO
+              </span>
+            </DropdownMenuItem>
+          )}
+          {isProPlan() ? (
+            <DropdownMenuItem>
+              <span className="flex flex-1 items-center gap-2">
+                <QrCode className="size-4" strokeWidth={2.25} />
+                Get QR Code
+              </span>
+              <span className="rounded-sm border border-on-surface bg-tertiary-fixed px-1.5 py-0.5 text-[10px] font-bold text-on-tertiary-fixed">
+                PRO
+              </span>
+            </DropdownMenuItem>
+          ) : (
+            <DropdownMenuItem disabled>
+              <span className="flex flex-1 items-center gap-2">
+                <QrCode className="size-4" strokeWidth={2.25} />
+                Get QR Code
+              </span>
+              <span className="rounded-sm border border-on-surface bg-tertiary-fixed px-1.5 py-0.5 text-[10px] font-bold text-on-tertiary-fixed">
+                PRO
+              </span>
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuItem>
+            <EyeOff className="size-4" strokeWidth={2.25} />
+            Hide Link
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            variant="destructive"
+            onClick={() => setConfirmOpen(true)}
+          >
+            <Trash2 className="size-4" strokeWidth={2.25} />
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title="Delete link?"
+        description={`"${title}" will be permanently deleted. This action cannot be undone.`}
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        destructive
+        isLoading={deleteLink.isPending}
+        onConfirm={handleConfirmDelete}
+      />
+    </>
+  );
+}
