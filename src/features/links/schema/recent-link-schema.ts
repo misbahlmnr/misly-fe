@@ -2,6 +2,6 @@ export type RecentLink = {
   id: string;
   title: string;
   slug: string;
-  clicks: number;
+  clickCount: number;
   createdLabel: string;
 };
