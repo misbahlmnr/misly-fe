@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { linkStatusSchema } from "@/features/links/schema/link-status-schema";
+import { apiLinkStatusSchema } from "@/features/links/schema/link-status-schema";
 
 export const apiLinkSchema = z.object({
   id: z.string(),
@@ -11,7 +11,7 @@ export const apiLinkSchema = z.object({
   clickCount: z.number().optional(),
   createdAt: z.string(),
   updatedAt: z.string().optional(),
-  status: linkStatusSchema.optional(),
+  status: apiLinkStatusSchema.optional(),
 });
 
 export type ApiLink = z.infer<typeof apiLinkSchema>;
