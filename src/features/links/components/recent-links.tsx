@@ -114,6 +114,7 @@ export function RecentLinks({
                           slug={link.slug}
                           linkId={link.id}
                           title={link.title}
+                          destinationUrl={link.destinationUrl}
                         />
                       </div>
                     </div>

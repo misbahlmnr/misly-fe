@@ -3,6 +3,7 @@ import axios from "axios";
 import { restApiPaths } from "@/config/api";
 import {
   toCreateLinkPayload,
+  toUpdateLinkPayload,
   type CreateLinkValues,
   type ManagedLink,
 } from "@/features/links/schema";
@@ -60,6 +61,19 @@ export async function getLinksOnClient(
 
 export async function deleteLink(id: string): Promise<void> {
   const response = await axios.delete(restApiPaths.links.delete(id), {
+    validateStatus: () => true,
+  });
+
+  return response.data;
+}
+
+export async function updateLinkOnClient(
+  id: string,
+  values: CreateLinkValues,
+) {
+  const payload = toUpdateLinkPayload(values);
+
+  const response = await axios.put(restApiPaths.links.update(id), payload, {
     validateStatus: () => true,
   });
 

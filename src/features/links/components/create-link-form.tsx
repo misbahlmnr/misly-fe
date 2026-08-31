@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Scissors } from "lucide-react";
+import { Loader2, Save, Scissors } from "lucide-react";
 import { useForm } from "react-hook-form";
 
 import { FieldError } from "@/components/shared/field-error";
@@ -22,13 +22,26 @@ import {
   type CreateLinkValues,
 } from "@/features/links/schema";
 import { useCreateLink } from "../hooks/use-create-link";
+import { useUpdateLink } from "../hooks/use-update-link";
 
 const domainItems = domains.map((domain) => ({
   label: domain,
   value: domain,
 }));
 
-export function CreateLinkForm({ onCancel }: { onCancel: () => void }) {
+type CreateLinkFormProps = {
+  onCancel: () => void;
+  /* CONCEPT: Discriminated Union 
+      Is a concept in programming that allows us to create a union type that has different properties.
+  */
+} & (
+  | { mode?: "create"; linkId?: undefined; defaultValues?: undefined }
+  | { mode: "edit"; linkId: string; defaultValues: CreateLinkValues }
+);
+
+export function CreateLinkForm(props: CreateLinkFormProps) {
+  const { onCancel } = props;
+  const isEdit = props.mode === "edit";
   const {
     register,
     handleSubmit,
@@ -37,20 +50,36 @@ export function CreateLinkForm({ onCancel }: { onCancel: () => void }) {
     formState: { errors },
   } = useForm<CreateLinkValues>({
     resolver: zodResolver(createLinkSchema),
-    defaultValues: {
-      destinationUrl: "",
-      domain: defaultDomain,
-      customSlug: "",
-      title: "",
-    },
+    defaultValues: isEdit
+      ? props.defaultValues
+      : {
+          destinationUrl: "",
+          domain: defaultDomain,
+          customSlug: "",
+          title: "",
+        },
   });
 
   const createLink = useCreateLink();
+  const updateLink = useUpdateLink();
+  const isPending = isEdit ? updateLink.isPending : createLink.isPending;
 
   function onSubmit(values: CreateLinkValues) {
+    if (props.mode === "edit") {
+      updateLink.mutate(
+        { id: props.linkId, values },
+        {
+          onSuccess: (result) => {
+            if (result.success) onCancel();
+          },
+        },
+      );
+      return;
+    }
+
     createLink.mutate(values, {
-      onSuccess: () => {
-        onCancel();
+      onSuccess: (result) => {
+        if (result.success) onCancel();
       },
     });
   }
@@ -73,11 +102,12 @@ export function CreateLinkForm({ onCancel }: { onCancel: () => void }) {
           <Select
             items={domainItems}
             value={watch("domain")}
+            disabled={isEdit}
             onValueChange={(value) => {
               if (value) setValue("domain", value);
             }}
           >
-            <SelectTrigger aria-label="Domain">
+            <SelectTrigger aria-label="Domain" disabled={isEdit}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -95,10 +125,13 @@ export function CreateLinkForm({ onCancel }: { onCancel: () => void }) {
           <Input
             type="text"
             placeholder="summer-sale"
+            disabled={isEdit}
             {...register("customSlug")}
           />
           <p className="mt-2 font-body text-xs text-outline">
-            Optional — leave empty to generate automatically.
+            {isEdit
+              ? "Short link slug cannot be changed."
+              : "Optional — leave empty to generate automatically."}
           </p>
         </Field>
       </div>
@@ -125,13 +158,14 @@ export function CreateLinkForm({ onCancel }: { onCancel: () => void }) {
         >
           Cancel
         </Button>
-        <Button
-          type="submit"
-          disabled={createLink.isPending}
-          className="flex-1"
-        >
-          {createLink.isPending ? (
+        <Button type="submit" disabled={isPending} className="flex-1">
+          {isPending ? (
             <Loader2 className="size-5 animate-spin" strokeWidth={2.5} />
+          ) : isEdit ? (
+            <>
+              Save changes
+              <Save className="size-5" strokeWidth={2.5} />
+            </>
           ) : (
             <>
               Shorten Link

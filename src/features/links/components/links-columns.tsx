@@ -62,7 +62,12 @@ export const linksColumns: ColumnDef<ManagedLink>[] = [
       return (
         <div className="flex justify-center gap-2">
           <CopyLinkButton url={`https://${shortUrl}`} className="rounded-md" />
-          <LinkActions slug={link.slug} linkId={link.id} title={link.title} />
+          <LinkActions
+            slug={link.slug}
+            linkId={link.id}
+            title={link.title}
+            destinationUrl={link.destinationUrl}
+          />
         </div>
       );
     },

@@ -11,5 +11,6 @@ export const restApiPaths = {
     get: "/api/links",
     create: "/api/links",
     delete: (id: string) => `/api/links/${id}`,
+    update: (id: string) => `/api/links/${id}`,
   },
 } as const;

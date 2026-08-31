@@ -1,18 +1,27 @@
 "use client";
 
-import { Plus, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { X } from "lucide-react";
+import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import { CreateLinkForm } from "@/features/links/components/create-link-form";
-import { cn } from "@/lib/utils";
+import { defaultDomain } from "@/features/links/constants";
 
-export function CreateLinkDialog({
+type EditLink = {
+  id: string;
+  title: string;
+  slug: string;
+  destinationUrl: string;
+};
+
+export function EditLinkDialog({
   open,
   onOpenChange,
+  link,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  link: EditLink;
 }) {
   useEffect(() => {
     if (!open) return;
@@ -41,7 +50,7 @@ export function CreateLinkDialog({
       <div
         role="dialog"
         aria-modal="true"
-        aria-labelledby="create-link-title"
+        aria-labelledby="edit-link-title"
         className="relative z-10 flex w-full max-w-md flex-col rounded-lg bg-surface-container-lowest ink-border shadow-hard"
       >
         <Button
@@ -57,35 +66,28 @@ export function CreateLinkDialog({
         <div className="p-6 md:p-8">
           <div className="mb-6">
             <h2
-              id="create-link-title"
+              id="edit-link-title"
               className="mb-2 font-headline text-2xl font-bold text-on-surface"
             >
-              Create a short link
+              Edit link
             </h2>
             <p className="font-body text-sm text-outline">
-              Turn a long URL into a short, shareable link.
+              Update the destination URL or title for this short link.
             </p>
           </div>
-          <CreateLinkForm onCancel={() => onOpenChange(false)} />
+          <CreateLinkForm
+            mode="edit"
+            linkId={link.id}
+            defaultValues={{
+              destinationUrl: link.destinationUrl,
+              domain: defaultDomain,
+              customSlug: link.slug,
+              title: link.title,
+            }}
+            onCancel={() => onOpenChange(false)}
+          />
         </div>
       </div>
     </div>
-  );
-}
-
-export function CreateLinkButton({ className }: { className?: string }) {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <>
-      <Button
-        className={cn("whitespace-nowrap px-6", className)}
-        onClick={() => setOpen(true)}
-      >
-        <Plus className="size-5" strokeWidth={2.5} fill="currentColor" />
-        Create Link
-      </Button>
-      <CreateLinkDialog open={open} onOpenChange={setOpen} />
-    </>
   );
 }

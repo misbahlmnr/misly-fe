@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { dashboardLinkPath } from "@/config/routes";
 import { isProPlan } from "@/config/user";
+import { EditLinkDialog } from "@/features/links/components/edit-link-dialog";
 import { useDeleteLink } from "../hooks/use-delete-link";
 
 const triggerClass =
@@ -30,10 +31,17 @@ interface LinkActionsProps {
   slug: string;
   linkId: string;
   title: string;
+  destinationUrl: string;
 }
 
-export function LinkActions({ slug, linkId, title }: LinkActionsProps) {
+export function LinkActions({
+  slug,
+  linkId,
+  title,
+  destinationUrl,
+}: LinkActionsProps) {
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
   const deleteLink = useDeleteLink();
 
   function handleConfirmDelete() {
@@ -49,7 +57,7 @@ export function LinkActions({ slug, linkId, title }: LinkActionsProps) {
           <MoreHorizontal className="size-5" strokeWidth={2.25} />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setEditOpen(true)}>
             <Pencil className="size-4" strokeWidth={2.25} />
             Edit
           </DropdownMenuItem>
@@ -110,6 +118,11 @@ export function LinkActions({ slug, linkId, title }: LinkActionsProps) {
         </DropdownMenuContent>
       </DropdownMenu>
 
+      <EditLinkDialog
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        link={{ id: linkId, title, slug, destinationUrl }}
+      />
       <ConfirmDialog
         open={confirmOpen}
         onOpenChange={setConfirmOpen}

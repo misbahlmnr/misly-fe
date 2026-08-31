@@ -6,6 +6,7 @@ export type {
   LinkStatus,
   ManagedLink,
   RecentLink,
+  UpdateLinkPayload,
 } from "@/features/links/schema";
 
 export {
@@ -18,4 +19,6 @@ export {
   managedLinksSchema,
   mapApiLinkToManagedLink,
   toCreateLinkPayload,
+  toUpdateLinkPayload,
+  updateLinkPayloadSchema,
 } from "@/features/links/schema";

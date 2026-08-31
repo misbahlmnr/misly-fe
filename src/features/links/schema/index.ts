@@ -10,6 +10,12 @@ export {
 } from "@/features/links/schema/create-link-payload-schema";
 
 export {
+  updateLinkPayloadSchema,
+  toUpdateLinkPayload,
+  type UpdateLinkPayload,
+} from "@/features/links/schema/update-link-payload-schema";
+
+export {
   createdLinkSchema,
   type CreatedLink,
 } from "@/features/links/schema/created-link-schema";
