@@ -1,0 +1,46 @@
+export const plans = [
+  {
+    id: "free",
+    name: "Free",
+    description: "Perfect for individuals just getting started.",
+    monthlyPrice: 0,
+    yearlyPrice: 0,
+    cta: "Get Started",
+    featured: false,
+    features: [
+      "50 short links / month",
+      "Basic click analytics",
+      "Standard QR codes",
+    ],
+  },
+  {
+    id: "professional",
+    name: "Professional",
+    description: "For creators and small businesses growing their audience.",
+    monthlyPrice: 12,
+    yearlyPrice: 9,
+    cta: "Start Free Trial",
+    featured: true,
+    features: [
+      "1,000 short links / month",
+      "Advanced geo & device analytics",
+      "Custom back-halves",
+      "Link in bio page",
+    ],
+  },
+  {
+    id: "business",
+    name: "Business",
+    description: "Advanced features for teams and high volume traffic.",
+    monthlyPrice: 49,
+    yearlyPrice: 39,
+    cta: "Contact Sales",
+    featured: false,
+    features: [
+      "10,000 short links / month",
+      "Custom domains",
+      "API Access",
+      "Priority Support",
+    ],
+  },
+] as const
