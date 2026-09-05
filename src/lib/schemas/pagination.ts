@@ -52,7 +52,7 @@ export function buildLinksQuery(params: LinksQueryParams) {
     page: params.page,
     limit: params.limit,
     q: params.q,
-    status: params.status === "all" ? undefined : params.status,
+    status: params.status,
     sort: params.sort === "newest" ? undefined : params.sort,
   });
 }

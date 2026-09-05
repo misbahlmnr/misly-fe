@@ -2,7 +2,11 @@ import { NextResponse } from "next/server";
 
 import { getAuthToken } from "@/features/auth/common/session";
 import { updateLinkPayloadSchema } from "@/features/links/schema";
-import { deleteLink, updateLink } from "@/features/links/services/server";
+import {
+  deleteLink,
+  updateLink,
+  updateLinkStatus,
+} from "@/features/links/services/server";
 import { ApiError } from "@/lib/api";
 import { parseJsonBody } from "@/lib/schemas/api";
 

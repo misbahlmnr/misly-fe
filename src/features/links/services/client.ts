@@ -54,8 +54,7 @@ export async function getLinksOnClient(
   return {
     data: body.data ?? [],
     meta:
-      body.meta ??
-      createFallbackPaginationMeta(params, body.data?.length ?? 0),
+      body.meta ?? createFallbackPaginationMeta(params, body.data?.length ?? 0),
   };
 }
 
@@ -67,15 +66,27 @@ export async function deleteLink(id: string): Promise<void> {
   return response.data;
 }
 
-export async function updateLinkOnClient(
-  id: string,
-  values: CreateLinkValues,
-) {
+export async function updateLinkOnClient(id: string, values: CreateLinkValues) {
   const payload = toUpdateLinkPayload(values);
 
   const response = await axios.put(restApiPaths.links.update(id), payload, {
     validateStatus: () => true,
   });
+
+  return response.data;
+}
+
+export async function updateLinkStatus(
+  id: string,
+  value: string,
+): Promise<void> {
+  const response = await axios.patch(
+    restApiPaths.links.updateStatus(id),
+    { status: value },
+    {
+      validateStatus: () => true,
+    },
+  );
 
   return response.data;
 }

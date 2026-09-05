@@ -3,7 +3,11 @@ import {
   apiLinkSchema,
   mapApiLinkToManagedLink,
 } from "@/features/links/schema";
-import type { CreatedLink, CreateLinkPayload, UpdateLinkPayload } from "@/features/links/types";
+import type {
+  CreatedLink,
+  CreateLinkPayload,
+  UpdateLinkPayload,
+} from "@/features/links/types";
 import { api, apiPaginated } from "@/lib/api";
 import type { LinksQueryParams } from "@/lib/schemas/pagination";
 import { buildLinksQuery } from "@/lib/schemas/pagination";
@@ -40,5 +44,12 @@ export const updateLink = (id: string, payload: UpdateLinkPayload) => {
   return api<CreatedLink>(restApiPaths.links.update(id), {
     method: "PUT",
     body: JSON.stringify(payload),
+  });
+};
+
+export const updateLinkStatus = (id: string, value: string) => {
+  return api<void>(restApiPaths.links.updateStatus(id), {
+    method: "PATCH",
+    body: JSON.stringify({ status: value }),
   });
 };

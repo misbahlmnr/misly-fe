@@ -67,6 +67,7 @@ export const linksColumns: ColumnDef<ManagedLink>[] = [
             linkId={link.id}
             title={link.title}
             destinationUrl={link.destinationUrl}
+            isHidden={link.status === "hidden"}
           />
         </div>
       );

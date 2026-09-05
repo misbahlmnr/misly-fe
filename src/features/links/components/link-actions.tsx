@@ -2,6 +2,7 @@
 
 import {
   BarChart3,
+  Eye,
   EyeOff,
   MoreHorizontal,
   Pencil,
@@ -23,6 +24,7 @@ import { dashboardLinkPath } from "@/config/routes";
 import { isProPlan } from "@/config/user";
 import { EditLinkDialog } from "@/features/links/components/edit-link-dialog";
 import { useDeleteLink } from "../hooks/use-delete-link";
+import { useUpdateStatus } from "../hooks/use-update-status";
 
 const triggerClass =
   "inline-flex items-center justify-center rounded-md bg-tertiary-fixed p-2 ink-border btn-hard-shadow-sm hover:bg-surface";
@@ -32,6 +34,7 @@ interface LinkActionsProps {
   linkId: string;
   title: string;
   destinationUrl: string;
+  isHidden: boolean;
 }
 
 export function LinkActions({
@@ -39,10 +42,20 @@ export function LinkActions({
   linkId,
   title,
   destinationUrl,
+  isHidden,
 }: LinkActionsProps) {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const deleteLink = useDeleteLink();
+  const updateStatus = useUpdateStatus();
+
+  function handleUpdateStatus() {
+    const value: string = isHidden ? "active" : "hidden";
+    updateStatus.mutate(
+      { id: linkId, value },
+      { onSuccess: () => setConfirmOpen(false) },
+    );
+  }
 
   function handleConfirmDelete() {
     deleteLink.mutate(linkId, {
@@ -103,9 +116,18 @@ export function LinkActions({
               </span>
             </DropdownMenuItem>
           )}
-          <DropdownMenuItem>
-            <EyeOff className="size-4" strokeWidth={2.25} />
-            Hide Link
+          <DropdownMenuItem onClick={handleUpdateStatus}>
+            {isHidden ? (
+              <>
+                <Eye className="size-4" strokeWidth={2.25} />
+                Show Link
+              </>
+            ) : (
+              <>
+                <EyeOff className="size-4" strokeWidth={2.25} />
+                Hide Link
+              </>
+            )}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem

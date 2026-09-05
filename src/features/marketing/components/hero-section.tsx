@@ -11,11 +11,6 @@ export function HeroSection() {
 
       <div className="relative mx-auto max-w-container-max px-4 py-24 md:px-8 md:py-32">
         <div className="mx-auto max-w-4xl space-y-8 text-center">
-          <div className="hero-fade btn-hard-shadow mx-auto mb-4 inline-flex items-center gap-2 rounded-full bg-secondary-container px-4 py-2 text-sm font-semibold ink-border hover:translate-x-0 hover:translate-y-0">
-            <Zap className="size-4 text-primary" strokeWidth={2} />
-            <span>The fastest way to manage your links.</span>
-          </div>
-
           <h1 className="hero-fade delay-100 text-5xl leading-[1.1] font-extrabold text-on-surface md:text-7xl">
             Shorten your links,
             <br />
