@@ -10,3 +10,14 @@ export type PasswordValues = {
   newPassword: string
   confirmPassword: string
 }
+
+export type CustomDomainStatus = "pending" | "verified" | "failed"
+
+export type CustomDomain = {
+  id: string
+  host: string
+  addedLabel: string
+  status: CustomDomainStatus
+  verifyAttempts: number
+  lastError?: string
+}
