@@ -14,7 +14,8 @@ import {
 } from "@/components/ui/select";
 import { CreateQrButton } from "@/features/qr-codes/components/create-qr-button";
 import { QrCard } from "@/features/qr-codes/components/qr-card";
-import { qrCodes, qrSummary } from "@/features/qr-codes/constants";
+import { useGetQrCodes } from "@/features/qr-codes/hooks/use-get-qr-codes";
+import type { QrCodeItem } from "@/features/qr-codes/types";
 
 const statusItems = [
   { label: "All Status", value: "all" },
@@ -30,6 +31,7 @@ const sortItems = [
 ];
 
 export function QrCodesPage() {
+  const { data = [], isLoading, isError, refetch } = useGetQrCodes();
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
   const [sort, setSort] = useState("newest");
@@ -37,11 +39,12 @@ export function QrCodesPage() {
   const items = useMemo(() => {
     const q = query.trim().toLowerCase();
 
-    const filtered = qrCodes.filter((item) => {
+    const filtered = data.filter((item) => {
       const matchesQuery =
         q.length === 0 ||
         item.title.toLowerCase().includes(q) ||
-        item.shortUrl.toLowerCase().includes(q);
+        item.shortUrl.toLowerCase().includes(q) ||
+        item.destinationUrl.toLowerCase().includes(q);
       const matchesStatus =
         status === "all" ||
         (status === "customized" && item.customized) ||
@@ -56,7 +59,9 @@ export function QrCodesPage() {
       if (sort === "scans-low") return a.scans - b.scans;
       return b.createdAt.localeCompare(a.createdAt);
     });
-  }, [query, status, sort]);
+  }, [data, query, status, sort]);
+
+  const summary = useMemo(() => summarizeQrCodes(data), [data]);
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
@@ -133,7 +138,7 @@ export function QrCodesPage() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <SummaryCard
           label="Total QR Codes"
-          value={String(qrSummary.total)}
+          value={String(summary.total)}
           icon={
             <ScanQrCode
               className="size-6 text-primary"
@@ -145,7 +150,7 @@ export function QrCodesPage() {
         />
         <SummaryCard
           label="Total Scans"
-          value={qrSummary.totalScans.toLocaleString()}
+          value={summary.totalScans.toLocaleString()}
           icon={
             <BarChart3
               className="size-6 text-secondary"
@@ -157,7 +162,7 @@ export function QrCodesPage() {
         />
         <SummaryCard
           label="Most Scanned"
-          value={qrSummary.mostScanned.title}
+          value={summary.mostScannedTitle}
           valueClass="text-2xl truncate pr-2"
           icon={
             <Trophy
@@ -167,13 +172,37 @@ export function QrCodesPage() {
             />
           }
           iconWrap="bg-tertiary-fixed"
-          hint={`${qrSummary.mostScanned.scans.toLocaleString()} scans`}
+          hint={summary.mostScannedHint}
         />
       </div>
 
-      {items.length === 0 ? (
+      {isLoading ? (
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div
+              key={index}
+              className="h-80 animate-pulse rounded-xl bg-surface-container ink-border"
+            />
+          ))}
+        </div>
+      ) : isError ? (
+        <div className="space-y-3 text-center">
+          <p className="font-label font-bold text-outline">
+            Failed to load QR codes.
+          </p>
+          <button
+            type="button"
+            onClick={() => void refetch()}
+            className="font-label text-sm font-bold text-primary hover:underline"
+          >
+            Try again
+          </button>
+        </div>
+      ) : items.length === 0 ? (
         <p className="text-center font-label font-bold text-outline">
-          No QR codes match your filters.
+          {data.length === 0
+            ? "No QR codes yet."
+            : "No QR codes match your filters."}
         </p>
       ) : (
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-4">
@@ -184,6 +213,25 @@ export function QrCodesPage() {
       )}
     </div>
   );
+}
+
+function summarizeQrCodes(items: QrCodeItem[]) {
+  const totalScans = items.reduce((sum, item) => sum + item.scans, 0);
+  const mostScanned = items.reduce<QrCodeItem | null>((current, item) => {
+    if (!current || item.scans > current.scans) return item;
+    return current;
+  }, null);
+
+  const hasScans = Boolean(mostScanned && mostScanned.scans > 0);
+
+  return {
+    total: items.length,
+    totalScans,
+    mostScannedTitle: hasScans && mostScanned ? mostScanned.title : "—",
+    mostScannedHint: hasScans && mostScanned
+      ? `${mostScanned.scans.toLocaleString()} scans`
+      : undefined,
+  };
 }
 
 function SummaryCard({

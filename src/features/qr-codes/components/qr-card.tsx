@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   BarChart3,
@@ -8,13 +8,12 @@ import {
   Eye,
   FileCode2,
   FileImage,
-  FileText,
   MoreHorizontal,
   Palette,
   Pencil,
   Trash2,
-} from "lucide-react"
-import { useState } from "react"
+} from "lucide-react";
+import { useState } from "react";
 
 import {
   DropdownMenu,
@@ -23,37 +22,61 @@ import {
   DropdownMenuLink,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   dashboardQrAnalyticsPath,
   dashboardQrCodeEditPath,
-} from "@/config/routes"
-import { isProPlan } from "@/config/user"
-import { QrPattern } from "@/features/qr-codes/components/qr-pattern"
-import type { QrCodeItem } from "@/features/qr-codes/types"
+} from "@/config/routes";
+import { isProPlan } from "@/config/user";
+import { QrStyledPreview } from "@/features/qr-codes/components/qr-styled-preview";
+import { downloadStyledQr } from "@/features/qr-codes/lib/qr-styling";
+import type { QrDownloadExtension } from "@/features/qr-codes/lib/qr-styling";
+import { toAbsoluteUrl } from "@/features/qr-codes/lib/url";
+import type { QrCodeItem } from "@/features/qr-codes/types";
+
+function displayHost(url: string) {
+  try {
+    const parsed = new URL(toAbsoluteUrl(url));
+    return `${parsed.host}${parsed.pathname.replace(/\/$/, "")}`;
+  } catch {
+    return url.replace(/^https?:\/\//i, "");
+  }
+}
 
 export function QrCard({ item }: { item: QrCodeItem }) {
-  const [copied, setCopied] = useState(false)
+  const [copied, setCopied] = useState(false);
+  const href = toAbsoluteUrl(item.shortUrl);
 
   async function copyLink() {
     try {
-      await navigator.clipboard.writeText(`https://${item.shortUrl}`)
-      setCopied(true)
-      window.setTimeout(() => setCopied(false), 1500)
+      await navigator.clipboard.writeText(href);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
     } catch {
-      setCopied(false)
+      setCopied(false);
     }
+  }
+
+  async function download(extension: QrDownloadExtension) {
+    await downloadStyledQr({
+      data: item.shortUrl || item.destinationUrl,
+      styles: item.styles,
+      logoUrl: item.logoUrl,
+      name: item.title || "qr-code",
+      extension,
+    });
   }
 
   return (
     <div className="flex flex-col rounded-xl bg-surface-container-lowest ink-border shadow-hard">
       <div className="relative flex h-56 items-center justify-center overflow-hidden rounded-t-xl border-b-2 border-on-surface bg-surface-bright p-8">
-        <QrPattern seed={item.id} style={item.style} logo={item.logo} />
-        {item.featured && (
-          <div className="absolute top-4 right-4 bg-tertiary-fixed px-2 py-1 text-xs font-bold text-on-surface ink-border shadow-hard-pressed">
-            Top
-          </div>
-        )}
+        <QrStyledPreview
+          data={item.shortUrl || item.destinationUrl}
+          styles={item.styles}
+          logoUrl={item.logoUrl}
+          size={176}
+          className="size-full max-w-[176px]"
+        />
       </div>
 
       <div className="flex flex-1 flex-col p-5">
@@ -61,10 +84,12 @@ export function QrCard({ item }: { item: QrCodeItem }) {
           {item.title}
         </h3>
         <a
-          href={`https://${item.shortUrl}`}
+          href={href}
+          target="_blank"
+          rel="noreferrer"
           className="mb-4 flex items-center gap-1 text-sm font-medium text-primary hover:underline"
         >
-          {item.shortUrl}
+          {displayHost(item.shortUrl)}
           <ExternalLink className="size-4" strokeWidth={2.25} />
         </a>
 
@@ -85,17 +110,13 @@ export function QrCard({ item }: { item: QrCodeItem }) {
               <Download className="size-5" strokeWidth={2.25} />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="min-w-36">
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => void download("png")}>
                 <FileImage className="size-4" strokeWidth={2.25} />
                 PNG
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => void download("svg")}>
                 <FileCode2 className="size-4" strokeWidth={2.25} />
                 SVG
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <FileText className="size-4" strokeWidth={2.25} />
-                PDF
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -157,5 +178,5 @@ export function QrCard({ item }: { item: QrCodeItem }) {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -7,18 +7,17 @@ import { useState } from "react"
 import { HardLink } from "@/components/shared/hard-button"
 import { Button } from "@/components/ui/button"
 import { dashboardQrCodeEditPath, routes } from "@/config/routes"
-import { QrPattern } from "@/features/qr-codes/components/qr-pattern"
-import { getQrLinkOption } from "@/features/qr-codes/constants"
+import { QrStyledPreview } from "@/features/qr-codes/components/qr-styled-preview"
+import { toAbsoluteUrl } from "@/features/qr-codes/lib/url"
 import type { QrCodeItem } from "@/features/qr-codes/types"
 
 export function QrAnalyticsHeader({ item }: { item: QrCodeItem }) {
   const [copied, setCopied] = useState(false)
-  const option = getQrLinkOption(item.linkSlug ?? item.id)
-  const shortUrl = option?.shortUrl ?? item.shortUrl
+  const href = toAbsoluteUrl(item.shortUrl)
 
   async function handleCopy() {
     try {
-      await navigator.clipboard.writeText(`https://${shortUrl}`)
+      await navigator.clipboard.writeText(href)
       setCopied(true)
       window.setTimeout(() => setCopied(false), 1500)
     } catch {
@@ -29,12 +28,13 @@ export function QrAnalyticsHeader({ item }: { item: QrCodeItem }) {
   return (
     <div className="flex w-full flex-col items-start justify-between gap-6 md:flex-row md:items-end">
       <div className="flex gap-4">
-        <div className="flex size-20 shrink-0 items-center justify-center rounded-xl bg-surface-container-lowest p-2 ink-border shadow-hard">
-          <QrPattern
-            seed={item.id}
-            style={item.style}
-            logo={item.logo}
-            className="size-full shadow-none"
+        <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-surface-container-lowest p-2 ink-border shadow-hard">
+          <QrStyledPreview
+            data={item.shortUrl || item.destinationUrl}
+            styles={item.styles}
+            logoUrl={item.logoUrl}
+            size={64}
+            className="size-full"
           />
         </div>
         <div className="flex w-full flex-col justify-center gap-1 md:w-auto">
@@ -50,10 +50,12 @@ export function QrAnalyticsHeader({ item }: { item: QrCodeItem }) {
           </h1>
           <div className="mt-1 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
             <a
-              href={`https://${shortUrl}`}
+              href={href}
+              target="_blank"
+              rel="noreferrer"
               className="flex items-center gap-1 text-base font-bold text-primary hover:underline"
             >
-              {shortUrl}
+              {item.shortUrl}
               <ExternalLink className="size-4" strokeWidth={2.25} />
             </a>
             <span className="hidden text-outline-variant sm:inline">|</span>

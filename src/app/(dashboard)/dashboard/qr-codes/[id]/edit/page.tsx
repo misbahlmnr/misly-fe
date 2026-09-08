@@ -1,7 +1,8 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
-import { CreateQrPage, getQrCode } from "@/features/qr-codes"
+import { CreateQrPage } from "@/features/qr-codes"
+import { getQrCodeOnServer } from "@/features/qr-codes/services/server"
 import type { QrEditorTab } from "@/features/qr-codes/types"
 
 export async function generateMetadata({
@@ -10,7 +11,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>
 }): Promise<Metadata> {
   const { id } = await params
-  const qr = getQrCode(id)
+  const qr = await getQrCodeOnServer(id)
 
   return {
     title: qr ? `Customize ${qr.title} - Misly` : "Customize QR Code - Misly",
@@ -26,7 +27,7 @@ export default async function Page({
 }) {
   const { id } = await params
   const { tab } = await searchParams
-  const qr = getQrCode(id)
+  const qr = await getQrCodeOnServer(id)
 
   if (!qr) notFound()
 

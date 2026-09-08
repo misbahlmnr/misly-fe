@@ -14,4 +14,8 @@ export const restApiPaths = {
     update: (id: string) => `/api/links/${id}`,
     updateStatus: (id: string) => `/api/links/${id}/status`,
   },
+  qrCodes: {
+    get: "/api/qr-codes",
+    create: "/api/qr-codes",
+  },
 } as const;
