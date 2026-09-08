@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { formatDate } from "@/lib/formatter";
 
-import { toAbsoluteUrl } from "./lib/url";
+import { formatShortLabel, resolveQrRedirectUrl, slugFromUrl } from "./lib/url";
 
 export const qrStylePresetSchema = z.enum(["default", "brand", "circular"]);
 export type QrStylePreset = z.infer<typeof qrStylePresetSchema>;
@@ -153,6 +153,18 @@ export function isQrCustomized(styles: QrStyles, logoUrl: string | null) {
   return JSON.stringify(resolved) !== JSON.stringify(defaultQrStyles);
 }
 
+const apiQrLinkSchema = z
+  .object({
+    id: z.string().optional(),
+    slug: z.string().optional(),
+    shortUrl: z.string().optional(),
+    shortLink: z.string().optional(),
+    short_url: z.string().optional(),
+    short_link: z.string().optional(),
+    originalUrl: z.string().optional(),
+  })
+  .optional();
+
 export const apiQrCodeSchema = z.object({
   id: z.string(),
   title: z.string(),
@@ -161,8 +173,13 @@ export const apiQrCodeSchema = z.object({
     .union([z.string(), z.record(z.string(), z.unknown()), z.null()])
     .optional(),
   logoUrl: z.string().nullable().optional(),
-  shortUrl: z.string(),
+  shortUrl: z.string().optional(),
+  shortLink: z.string().optional(),
+  short_url: z.string().optional(),
+  short_link: z.string().optional(),
+  slug: z.string().optional(),
   linkId: z.string().nullable().optional(),
+  link: apiQrLinkSchema,
   createdAt: z.string(),
   updatedAt: z.string().optional(),
 });
@@ -173,6 +190,7 @@ export type QrCodeItem = {
   id: string;
   title: string;
   shortUrl: string;
+  shortLabel: string;
   destinationUrl: string;
   scans: number;
   createdLabel: string;
@@ -181,17 +199,36 @@ export type QrCodeItem = {
   styles: QrStyles;
   logoUrl: string | null;
   linkId: string | null;
+  slug: string | null;
   customized: boolean;
 };
 
 export function mapApiQrToQrCodeItem(item: ApiQrCode): QrCodeItem {
   const styles = parseQrStyles(item.styles);
   const logoUrl = item.logoUrl?.trim() ? item.logoUrl.trim() : null;
+  const slug =
+    item.slug?.trim() ||
+    item.link?.slug?.trim() ||
+    slugFromUrl(
+      item.shortLink ||
+        item.short_link ||
+        item.shortUrl ||
+        item.short_url ||
+        "",
+    ) ||
+    null;
+  const shortUrl = resolveQrRedirectUrl({
+    shortLink: item.shortLink || item.short_link || item.link?.shortLink || item.link?.short_link,
+    shortUrl: item.shortUrl || item.short_url || item.link?.shortUrl || item.link?.short_url,
+    slug,
+    destinationUrl: item.destinationUrl,
+  });
 
   return {
     id: item.id,
     title: item.title,
-    shortUrl: toAbsoluteUrl(item.shortUrl),
+    shortUrl,
+    shortLabel: formatShortLabel(shortUrl, slug),
     destinationUrl: item.destinationUrl,
     scans: 0,
     createdLabel: formatDate(item.createdAt),
@@ -199,7 +236,8 @@ export function mapApiQrToQrCodeItem(item: ApiQrCode): QrCodeItem {
     updatedAt: item.updatedAt,
     styles,
     logoUrl,
-    linkId: item.linkId ?? null,
+    linkId: item.linkId ?? item.link?.id ?? null,
+    slug,
     customized: isQrCustomized(styles, logoUrl),
   };
 }
