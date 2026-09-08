@@ -12,9 +12,11 @@ export async function getQrCodesOnServer(): Promise<QrCodeItem[]> {
     method: "GET",
   });
 
-  return (Array.isArray(data) ? data : []).map((item) =>
-    mapApiQrToQrCodeItem(apiQrCodeSchema.parse(item)),
-  );
+  return (Array.isArray(data) ? data : []).flatMap((item) => {
+    const parsed = apiQrCodeSchema.safeParse(item);
+    if (!parsed.success) return [];
+    return [mapApiQrToQrCodeItem(parsed.data)];
+  });
 }
 
 export async function getQrCodeOnServer(id: string) {

@@ -34,15 +34,6 @@ import type { QrDownloadExtension } from "@/features/qr-codes/lib/qr-styling";
 import { toAbsoluteUrl } from "@/features/qr-codes/lib/url";
 import type { QrCodeItem } from "@/features/qr-codes/types";
 
-function displayHost(url: string) {
-  try {
-    const parsed = new URL(toAbsoluteUrl(url));
-    return `${parsed.host}${parsed.pathname.replace(/\/$/, "")}`;
-  } catch {
-    return url.replace(/^https?:\/\//i, "");
-  }
-}
-
 export function QrCard({ item }: { item: QrCodeItem }) {
   const [copied, setCopied] = useState(false);
   const href = toAbsoluteUrl(item.shortUrl);
@@ -59,7 +50,7 @@ export function QrCard({ item }: { item: QrCodeItem }) {
 
   async function download(extension: QrDownloadExtension) {
     await downloadStyledQr({
-      data: item.shortUrl || item.destinationUrl,
+      data: href,
       styles: item.styles,
       logoUrl: item.logoUrl,
       name: item.title || "qr-code",
@@ -71,7 +62,7 @@ export function QrCard({ item }: { item: QrCodeItem }) {
     <div className="flex flex-col rounded-xl bg-surface-container-lowest ink-border shadow-hard">
       <div className="relative flex h-56 items-center justify-center overflow-hidden rounded-t-xl border-b-2 border-on-surface bg-surface-bright p-8">
         <QrStyledPreview
-          data={item.shortUrl || item.destinationUrl}
+          data={href}
           styles={item.styles}
           logoUrl={item.logoUrl}
           size={176}
@@ -89,7 +80,7 @@ export function QrCard({ item }: { item: QrCodeItem }) {
           rel="noreferrer"
           className="mb-4 flex items-center gap-1 text-sm font-medium text-primary hover:underline"
         >
-          {displayHost(item.shortUrl)}
+          {item.shortLabel}
           <ExternalLink className="size-4" strokeWidth={2.25} />
         </a>
 

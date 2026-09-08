@@ -44,6 +44,7 @@ export function QrCodesPage() {
         q.length === 0 ||
         item.title.toLowerCase().includes(q) ||
         item.shortUrl.toLowerCase().includes(q) ||
+        item.shortLabel.toLowerCase().includes(q) ||
         item.destinationUrl.toLowerCase().includes(q);
       const matchesStatus =
         status === "all" ||
