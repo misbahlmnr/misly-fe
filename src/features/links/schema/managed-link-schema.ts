@@ -31,7 +31,7 @@ export function mapApiLinkToManagedLink(link: ApiLink): ManagedLink {
 
   return {
     id: link.id,
-    title: link.title,
+    title: link.title?.trim() || link.slug,
     slug: link.slug,
     shortUrl: resolveShortUrl(link.shortUrl, link.slug),
     destinationUrl: link.originalUrl,

@@ -3,8 +3,10 @@ import type { TimeRange, TimeSeriesPoint } from "@/lib/time-series"
 export type { TimeRange, TimeSeriesPoint }
 
 export type AnalyticsLink = {
+  id: string
   title: string
   slug: string
+  shortUrl?: string
   destinationUrl: string
   clicks: number
 }

@@ -19,6 +19,14 @@ export function createShortLink(payload: CreateLinkPayload) {
   });
 }
 
+export async function getLinkOnServer(idOrSlug: string) {
+  const data = await api<unknown>(restApiPaths.links.getById(idOrSlug), {
+    method: "GET",
+  });
+
+  return mapApiLinkToManagedLink(apiLinkSchema.parse(data));
+}
+
 export const getLinksOnServer = async (params: LinksQueryParams) => {
   const query = buildLinksQuery(params);
 

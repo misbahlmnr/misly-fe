@@ -11,7 +11,7 @@ import { formatShortLabel, resolveShortUrl } from "@/features/links/lib/url"
 
 export function AnalyticsHeader({ link }: { link: AnalyticsLink }) {
   const [copied, setCopied] = useState(false)
-  const href = resolveShortUrl(null, link.slug)
+  const href = resolveShortUrl(link.shortUrl, link.slug)
   const shortLabel = formatShortLabel(href)
 
   async function handleCopy() {

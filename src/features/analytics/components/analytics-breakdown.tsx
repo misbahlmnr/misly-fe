@@ -155,6 +155,11 @@ export function AnalyticsBreakdown({ data }: { data: LinkAnalytics }) {
             Top Browsers
           </h3>
           <ul className="flex flex-wrap gap-2">
+            {data.browsers.length === 0 ? (
+              <li className="text-sm text-on-surface-variant">
+                No browser data yet.
+              </li>
+            ) : null}
             {data.browsers.map((item) => (
               <li
                 key={item.name}

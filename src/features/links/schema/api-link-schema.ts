@@ -4,7 +4,7 @@ import { apiLinkStatusSchema } from "@/features/links/schema/link-status-schema"
 
 export const apiLinkSchema = z.object({
   id: z.string(),
-  title: z.string(),
+  title: z.string().nullable().optional(),
   originalUrl: z.string(),
   slug: z.string(),
   shortUrl: z.string().optional(),

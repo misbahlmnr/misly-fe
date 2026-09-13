@@ -1,7 +1,7 @@
 "use client"
 
 import type { ReactNode } from "react"
-import { Globe, MousePointerClick, Share2, TrendingUp, Users } from "lucide-react"
+import { Globe, MousePointerClick, Share2, TrendingDown, TrendingUp, Users } from "lucide-react"
 
 import { AnimatedNumber } from "@/components/shared/animated-number"
 import type { LinkAnalytics } from "@/features/analytics/types"
@@ -22,15 +22,7 @@ export function AnalyticsMetrics({ data }: { data: LinkAnalytics }) {
         iconWrap="bg-primary-fixed"
         glow="bg-primary"
         footer={
-          <>
-            <span className="flex items-center gap-1 text-sm font-bold text-secondary">
-              <TrendingUp className="size-3.5" strokeWidth={2.5} />+
-              <AnimatedNumber value={data.clicksChange} decimals={1} />%
-            </span>
-            <span className="text-xs text-on-surface-variant">
-              {data.comparisonLabel}
-            </span>
-          </>
+          <ChangeHint value={data.clicksChange} label={data.comparisonLabel} />
         }
       />
       <MetricCard
@@ -46,15 +38,10 @@ export function AnalyticsMetrics({ data }: { data: LinkAnalytics }) {
         iconWrap="bg-secondary-container"
         glow="bg-secondary"
         footer={
-          <>
-            <span className="flex items-center gap-1 text-sm font-bold text-secondary">
-              <TrendingUp className="size-3.5" strokeWidth={2.5} />+
-              <AnimatedNumber value={data.visitorsChange} decimals={1} />%
-            </span>
-            <span className="text-xs text-on-surface-variant">
-              {data.comparisonLabel}
-            </span>
-          </>
+          <ChangeHint
+            value={data.visitorsChange}
+            label={data.comparisonLabel}
+          />
         }
       />
       <MetricCard
@@ -70,14 +57,20 @@ export function AnalyticsMetrics({ data }: { data: LinkAnalytics }) {
         }
         iconWrap="bg-surface-container-high"
         footer={
-          <>
-            <span className="rounded border border-on-surface bg-on-surface px-2 py-0.5 text-xs font-bold text-surface-container-lowest">
-              <AnimatedNumber value={data.topCountry.share} />%
-            </span>
+          data.topCountry.name ? (
+            <>
+              <span className="rounded border border-on-surface bg-on-surface px-2 py-0.5 text-xs font-bold text-surface-container-lowest">
+                <AnimatedNumber value={data.topCountry.share} />%
+              </span>
+              <span className="text-xs text-on-surface-variant">
+                of total traffic
+              </span>
+            </>
+          ) : (
             <span className="text-xs text-on-surface-variant">
-              of total traffic
+              No location data yet
             </span>
-          </>
+          )
         }
       />
       <MetricCard
@@ -93,14 +86,20 @@ export function AnalyticsMetrics({ data }: { data: LinkAnalytics }) {
         }
         iconWrap="bg-tertiary-fixed"
         footer={
-          <>
-            <span className="rounded border border-on-surface bg-on-surface px-2 py-0.5 text-xs font-bold text-surface-container-lowest">
-              <AnimatedNumber value={data.topReferrer.share} />%
-            </span>
+          data.topReferrer.name ? (
+            <>
+              <span className="rounded border border-on-surface bg-on-surface px-2 py-0.5 text-xs font-bold text-surface-container-lowest">
+                <AnimatedNumber value={data.topReferrer.share} />%
+              </span>
+              <span className="text-xs text-on-surface-variant">
+                of total traffic
+              </span>
+            </>
+          ) : (
             <span className="text-xs text-on-surface-variant">
-              of total traffic
+              No referrer data yet
             </span>
-          </>
+          )
         }
       />
     </div>
@@ -152,5 +151,26 @@ function MetricCard({
         />
       )}
     </div>
+  )
+}
+
+function ChangeHint({ value, label }: { value: number; label: string }) {
+  const Icon = value < 0 ? TrendingDown : TrendingUp
+  const tone =
+    value > 0
+      ? "text-secondary"
+      : value < 0
+        ? "text-error"
+        : "text-on-surface-variant"
+
+  return (
+    <>
+      <span className={`flex items-center gap-1 text-sm font-bold ${tone}`}>
+        <Icon className="size-3.5" strokeWidth={2.5} />
+        {value > 0 ? "+" : ""}
+        <AnimatedNumber value={value} decimals={1} />%
+      </span>
+      <span className="text-xs text-on-surface-variant">{label}</span>
+    </>
   )
 }
