@@ -30,7 +30,7 @@ export function QrAnalyticsHeader({ item }: { item: QrCodeItem }) {
       <div className="flex gap-4">
         <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-surface-container-lowest p-2 ink-border shadow-hard">
           <QrStyledPreview
-            data={item.shortUrl || item.destinationUrl}
+            data={href}
             styles={item.styles}
             logoUrl={item.logoUrl}
             size={64}
@@ -55,7 +55,7 @@ export function QrAnalyticsHeader({ item }: { item: QrCodeItem }) {
               rel="noreferrer"
               className="flex items-center gap-1 text-base font-bold text-primary hover:underline"
             >
-              {item.shortUrl}
+              {item.shortLabel}
               <ExternalLink className="size-4" strokeWidth={2.25} />
             </a>
             <span className="hidden text-outline-variant sm:inline">|</span>

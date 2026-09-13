@@ -6,16 +6,17 @@ import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { routes } from "@/config/routes"
-import { defaultDomain } from "@/features/links"
 import type { AnalyticsLink } from "@/features/analytics/types"
+import { formatShortLabel, resolveShortUrl } from "@/features/links/lib/url"
 
 export function AnalyticsHeader({ link }: { link: AnalyticsLink }) {
   const [copied, setCopied] = useState(false)
-  const shortUrl = `${defaultDomain}/${link.slug}`
+  const href = resolveShortUrl(null, link.slug)
+  const shortLabel = formatShortLabel(href)
 
   async function handleCopy() {
     try {
-      await navigator.clipboard.writeText(`https://${shortUrl}`)
+      await navigator.clipboard.writeText(href)
       setCopied(true)
       window.setTimeout(() => setCopied(false), 1500)
     } catch {
@@ -43,10 +44,10 @@ export function AnalyticsHeader({ link }: { link: AnalyticsLink }) {
         </div>
         <div className="mt-1 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
           <a
-            href={`https://${shortUrl}`}
+            href={href}
             className="flex items-center gap-1 text-base font-bold text-primary hover:underline"
           >
-            {shortUrl}
+            {shortLabel}
             <ExternalLink className="size-4" strokeWidth={2.25} />
           </a>
           <span className="hidden text-outline-variant sm:inline">|</span>

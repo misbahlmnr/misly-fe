@@ -1,11 +1,8 @@
+import { getShortDomain, resolveShortUrl } from "@/features/links/lib/url";
 import type { ManagedLink, RecentLink } from "@/features/links/types";
 
-export const domains = [
-  process.env.NEXT_PUBLIC_APP_URL as string,
-  "mybrand.co",
-] as const;
-
-export const defaultDomain = domains[0];
+export const defaultDomain = getShortDomain();
+export const domains = [defaultDomain] as const;
 
 export const PAGE_SIZE = 4;
 
@@ -14,6 +11,7 @@ const featuredLinks: ManagedLink[] = [
     id: "summer-sale",
     title: "Summer Sale",
     slug: "summer-sale",
+    shortUrl: resolveShortUrl(null, "summer-sale"),
     destinationUrl: "https://example.com/campaigns/summer-sale",
     clickCount: 1240,
     createdAt: "2024-10-24",
@@ -25,6 +23,7 @@ const featuredLinks: ManagedLink[] = [
     id: "portfolio",
     title: "Portfolio",
     slug: "portfolio",
+    shortUrl: resolveShortUrl(null, "portfolio"),
     destinationUrl: "https://misbah.dev/portfolio",
     clickCount: 856,
     createdAt: "2024-10-18",
@@ -36,6 +35,7 @@ const featuredLinks: ManagedLink[] = [
     id: "github",
     title: "GitHub",
     slug: "github",
+    shortUrl: resolveShortUrl(null, "github"),
     destinationUrl: "https://github.com/misbahlmnr",
     clickCount: 342,
     createdAt: "2024-09-05",
@@ -47,6 +47,7 @@ const featuredLinks: ManagedLink[] = [
     id: "website",
     title: "Personal Website",
     slug: "website",
+    shortUrl: resolveShortUrl(null, "website"),
     destinationUrl: "https://example.com",
     clickCount: 128,
     createdAt: "2024-08-21",
@@ -65,6 +66,7 @@ const extraLinks: ManagedLink[] = Array.from({ length: 20 }, (_, index) => {
     id: `link-${n}`,
     title: `Campaign ${n}`,
     slug: `campaign-${n}`,
+    shortUrl: resolveShortUrl(null, `campaign-${n}`),
     destinationUrl: `https://example.com/campaigns/${n}`,
     clickCount: Math.max(12, 110 - index * 4),
     createdAt: `2024-07-${String(day).padStart(2, "0")}`,

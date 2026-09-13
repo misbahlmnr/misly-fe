@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { resolveShortUrl } from "@/features/links/lib/url";
 import type { ApiLink } from "@/features/links/schema/api-link-schema";
 import { linkStatusSchema } from "@/features/links/schema/link-status-schema";
 import { formatDate } from "@/lib/formatter";
@@ -8,6 +9,7 @@ export const managedLinkSchema = z.object({
   id: z.string(),
   title: z.string(),
   slug: z.string(),
+  shortUrl: z.string(),
   destinationUrl: z.string(),
   clickCount: z.number(),
   createdAt: z.string(),
@@ -31,6 +33,7 @@ export function mapApiLinkToManagedLink(link: ApiLink): ManagedLink {
     id: link.id,
     title: link.title,
     slug: link.slug,
+    shortUrl: resolveShortUrl(link.shortUrl, link.slug),
     destinationUrl: link.originalUrl,
     clickCount: link.clickCount ?? 0,
     createdAt: link.createdAt,

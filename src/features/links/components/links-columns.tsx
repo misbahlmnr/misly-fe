@@ -4,7 +4,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import { CopyLinkButton } from "@/features/links/components/copy-link-button";
 import { LinkActions } from "@/features/links/components/link-actions";
-import { defaultDomain } from "@/features/links/constants";
+import { formatShortLabel } from "@/features/links/lib/url";
 import type { ManagedLink } from "@/features/links/types";
 import { formatDate } from "@/lib/formatter";
 
@@ -14,7 +14,6 @@ export const linksColumns: ColumnDef<ManagedLink>[] = [
     header: "Link Detail",
     cell: ({ row }) => {
       const link = row.original;
-      const shortUrl = `${defaultDomain}/${link.slug}`;
 
       return (
         <div className="flex flex-col">
@@ -22,10 +21,10 @@ export const linksColumns: ColumnDef<ManagedLink>[] = [
             {link.title}
           </span>
           <a
-            href={shortUrl}
+            href={link.shortUrl}
             className="mb-1 w-fit font-body text-sm text-primary hover:underline"
           >
-            {shortUrl}
+            {formatShortLabel(link.shortUrl)}
           </a>
           <span className="max-w-xs truncate text-xs text-outline">
             {link.destinationUrl}
@@ -57,11 +56,10 @@ export const linksColumns: ColumnDef<ManagedLink>[] = [
     header: () => <span className="block text-center">Actions</span>,
     cell: ({ row }) => {
       const link = row.original;
-      const shortUrl = `${defaultDomain}/${link.slug}`;
 
       return (
         <div className="flex justify-center gap-2">
-          <CopyLinkButton url={`https://${shortUrl}`} className="rounded-md" />
+          <CopyLinkButton url={link.shortUrl} className="rounded-md" />
           <LinkActions
             slug={link.slug}
             linkId={link.id}

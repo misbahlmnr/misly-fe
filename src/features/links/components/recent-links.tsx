@@ -6,7 +6,7 @@ import Link from "next/link";
 import { routes } from "@/config/routes";
 import { CopyLinkButton } from "@/features/links/components/copy-link-button";
 import { LinkActions } from "@/features/links/components/link-actions";
-import { defaultDomain } from "@/features/links/constants";
+import { formatShortLabel } from "@/features/links/lib/url";
 import type { ManagedLink } from "@/features/links/types";
 import { formatNumber } from "@/lib/formatter";
 
@@ -62,66 +62,63 @@ export function RecentLinks({
           </div>
         ) : (
           <ul className="divide-y-2 divide-on-surface">
-            {links.map((link) => {
-              const shortUrl = `${defaultDomain}/${link.slug}`;
-
-              return (
-                <li
-                  key={link.id}
-                  className="p-4 transition-colors hover:bg-surface-bright md:p-6"
-                >
-                  <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-                    <div className="flex items-center gap-4">
-                      <div className="flex size-10 shrink-0 items-center justify-center rounded-md bg-primary-fixed ink-border">
-                        <Link2
-                          className="size-5 text-primary"
-                          strokeWidth={2.25}
-                        />
-                      </div>
-                      <div>
-                        <h3 className="font-label text-lg font-bold">
-                          {link.title || link.slug}
-                        </h3>
-                        <a
-                          href={shortUrl}
-                          className="break-all font-body text-sm text-primary hover:underline"
-                        >
-                          {shortUrl}
-                        </a>
-                      </div>
+            {links.map((link) => (
+              <li
+                key={link.id}
+                className="p-4 transition-colors hover:bg-surface-bright md:p-6"
+              >
+                <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+                  <div className="flex items-center gap-4">
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-md bg-primary-fixed ink-border">
+                      <Link2
+                        className="size-5 text-primary"
+                        strokeWidth={2.25}
+                      />
                     </div>
-
-                    <div className="flex items-center gap-6 text-sm md:gap-8">
-                      <div className="flex flex-col items-end">
-                        <span className="font-headline text-lg font-bold">
-                          {formatNumber(link.clickCount)}
-                        </span>
-                        <span className="font-label text-xs tracking-wider text-outline uppercase">
-                          Clicks
-                        </span>
-                      </div>
-                      <div className="hidden flex-col items-end md:flex">
-                        <span className="font-label font-semibold">
-                          {link.createdShort}
-                        </span>
-                        <span className="font-label text-xs tracking-wider text-outline uppercase">
-                          Created
-                        </span>
-                      </div>
-                      <div className="flex gap-2">
-                        <CopyLinkButton url={shortUrl} />
-                        <LinkActions
-                          slug={link.slug}
-                          linkId={link.id}
-                          title={link.title}
-                          destinationUrl={link.destinationUrl}
-                        />
-                      </div>
+                    <div>
+                      <h3 className="font-label text-lg font-bold">
+                        {link.title || link.slug}
+                      </h3>
+                      <a
+                        href={link.shortUrl}
+                        className="break-all font-body text-sm text-primary hover:underline"
+                      >
+                        {formatShortLabel(link.shortUrl)}
+                      </a>
                     </div>
                   </div>
-                </li>
-              );
-            })}
+
+                  <div className="flex items-center gap-6 text-sm md:gap-8">
+                    <div className="flex flex-col items-end">
+                      <span className="font-headline text-lg font-bold">
+                        {formatNumber(link.clickCount)}
+                      </span>
+                      <span className="font-label text-xs tracking-wider text-outline uppercase">
+                        Clicks
+                      </span>
+                    </div>
+                    <div className="hidden flex-col items-end md:flex">
+                      <span className="font-label font-semibold">
+                        {link.createdShort}
+                      </span>
+                      <span className="font-label text-xs tracking-wider text-outline uppercase">
+                        Created
+                      </span>
+                    </div>
+                    <div className="flex gap-2">
+                      <CopyLinkButton url={link.shortUrl} />
+                      <LinkActions
+                        slug={link.slug}
+                        linkId={link.id}
+                        title={link.title}
+                        destinationUrl={link.destinationUrl}
+                        isHidden={link.status === "hidden"}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </li>
+            ))}
           </ul>
         )}
       </div>
