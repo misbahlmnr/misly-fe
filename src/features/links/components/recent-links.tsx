@@ -81,6 +81,7 @@ export function RecentLinks({
                       </h3>
                       <a
                         href={link.shortUrl}
+                        target="_blank"
                         className="break-all font-body text-sm text-primary hover:underline"
                       >
                         {formatShortLabel(link.shortUrl)}

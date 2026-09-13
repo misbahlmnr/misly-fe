@@ -22,6 +22,7 @@ export const linksColumns: ColumnDef<ManagedLink>[] = [
           </span>
           <a
             href={link.shortUrl}
+            target="_blank"
             className="mb-1 w-fit font-body text-sm text-primary hover:underline"
           >
             {formatShortLabel(link.shortUrl)}
