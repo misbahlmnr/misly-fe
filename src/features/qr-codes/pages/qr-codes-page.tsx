@@ -229,9 +229,10 @@ function summarizeQrCodes(items: QrCodeItem[]) {
     total: items.length,
     totalScans,
     mostScannedTitle: hasScans && mostScanned ? mostScanned.title : "—",
-    mostScannedHint: hasScans && mostScanned
-      ? `${mostScanned.scans.toLocaleString()} scans`
-      : undefined,
+    mostScannedHint:
+      hasScans && mostScanned
+        ? `${mostScanned.scans.toLocaleString()} scans`
+        : undefined,
   };
 }
 

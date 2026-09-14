@@ -117,15 +117,3 @@ export function resolveQrRedirectUrl({
   if (dest) return dest;
   return QR_PLACEHOLDER_URL;
 }
-
-export function formatShortLabel(href: string, slug?: string | null) {
-  const labelSlug = slug || slugFromUrl(href);
-  if (labelSlug) return `${SHORT_LINK_BRAND_HOST}/${labelSlug}`;
-
-  try {
-    const parsed = new URL(toAbsoluteUrl(href));
-    return `${parsed.host}${parsed.pathname.replace(/\/$/, "")}`;
-  } catch {
-    return href.replace(/^https?:\/\//i, "");
-  }
-}

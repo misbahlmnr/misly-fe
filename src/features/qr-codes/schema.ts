@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { formatDate } from "@/lib/formatter";
 
-import { formatShortLabel, resolveQrRedirectUrl, slugFromUrl } from "./lib/url";
+import { resolveQrRedirectUrl, slugFromUrl } from "./lib/url";
 
 export const qrStylePresetSchema = z.enum(["default", "brand", "circular"]);
 export type QrStylePreset = z.infer<typeof qrStylePresetSchema>;
@@ -101,9 +101,11 @@ export function resolveQrStyles(styles?: QrStyles | null): ResolvedQrStyles {
     },
     cornersDotOptions: {
       type:
-        styles?.cornersDotOptions?.type ?? defaultQrStyles.cornersDotOptions.type,
+        styles?.cornersDotOptions?.type ??
+        defaultQrStyles.cornersDotOptions.type,
       color:
-        styles?.cornersDotOptions?.color ?? defaultQrStyles.cornersDotOptions.color,
+        styles?.cornersDotOptions?.color ??
+        defaultQrStyles.cornersDotOptions.color,
     },
     backgroundOptions: {
       color:
@@ -218,8 +220,16 @@ export function mapApiQrToQrCodeItem(item: ApiQrCode): QrCodeItem {
     ) ||
     null;
   const shortUrl = resolveQrRedirectUrl({
-    shortLink: item.shortLink || item.short_link || item.link?.shortLink || item.link?.short_link,
-    shortUrl: item.shortUrl || item.short_url || item.link?.shortUrl || item.link?.short_url,
+    shortLink:
+      item.shortLink ||
+      item.short_link ||
+      item.link?.shortLink ||
+      item.link?.short_link,
+    shortUrl:
+      item.shortUrl ||
+      item.short_url ||
+      item.link?.shortUrl ||
+      item.link?.short_url,
     slug,
     destinationUrl: item.destinationUrl,
   });
@@ -228,7 +238,7 @@ export function mapApiQrToQrCodeItem(item: ApiQrCode): QrCodeItem {
     id: item.id,
     title: item.title,
     shortUrl,
-    shortLabel: formatShortLabel(shortUrl, slug),
+    shortLabel: shortUrl,
     destinationUrl: item.destinationUrl,
     scans: 0,
     createdLabel: formatDate(item.createdAt),
@@ -286,7 +296,8 @@ export const createQrSchema = z
   )
   .refine(
     (values) =>
-      values.source !== "new" || /^https?:\/\/.+/i.test(values.destinationUrl.trim()),
+      values.source !== "new" ||
+      /^https?:\/\/.+/i.test(values.destinationUrl.trim()),
     {
       message: "Enter a valid URL",
       path: ["destinationUrl"],
@@ -366,7 +377,9 @@ export function valuesFromQr(item?: QrCodeItem): CreateQrValues {
   };
 }
 
-export function applyQrPreset(preset: QrStylePreset): Pick<
+export function applyQrPreset(
+  preset: QrStylePreset,
+): Pick<
   CreateQrValues,
   | "preset"
   | "dotsType"
