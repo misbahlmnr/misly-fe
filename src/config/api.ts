@@ -10,14 +10,14 @@ export const restApiPaths = {
   links: {
     get: "/api/links",
     create: "/api/links",
-    getById: (id: string) => `/api/links/${encodeURIComponent(id)}`,
+    getById: (id: string) => `/api/links/${id}`,
+    resolve: (slug: string) => `/api/links/resolve/${slug}`,
     delete: (id: string) => `/api/links/${id}`,
     update: (id: string) => `/api/links/${id}`,
     updateStatus: (id: string) => `/api/links/${id}/status`,
   },
   analytics: {
-    stats: (linkId: string) =>
-      `/api/analytics/${encodeURIComponent(linkId)}/stats`,
+    stats: (linkId: string) => `/api/analytics/${linkId}/stats`,
   },
   qrCodes: {
     get: "/api/qr-codes",

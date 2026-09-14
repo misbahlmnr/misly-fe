@@ -1,3 +1,5 @@
+import { getShortOrigin } from "@/features/links/lib/url";
+
 export const QR_PLACEHOLDER_URL = "https://misly.link";
 export const SHORT_LINK_BRAND_HOST = "misly.link";
 
@@ -11,8 +13,7 @@ export function toAbsoluteUrl(url: string) {
 }
 
 export function getShortenerOrigin() {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
-  return apiUrl.replace(/\/api$/i, "");
+  return getShortOrigin();
 }
 
 export function slugFromUrl(url: string) {
@@ -51,7 +52,9 @@ function isHttpUrl(url: string) {
 
 function isBrandedShortHost(url: string) {
   try {
-    return new URL(url).hostname.replace(/^www\./, "") === SHORT_LINK_BRAND_HOST;
+    return (
+      new URL(url).hostname.replace(/^www\./, "") === SHORT_LINK_BRAND_HOST
+    );
   } catch {
     return false;
   }
@@ -77,7 +80,11 @@ export function resolveQrRedirectUrl({
   const fromShortLink = normalizeRedirectCandidate(shortLink);
   const fromShortUrl = normalizeRedirectCandidate(shortUrl);
 
-  if (fromShortLink && isHttpUrl(fromShortLink) && !isBrandedShortHost(fromShortLink)) {
+  if (
+    fromShortLink &&
+    isHttpUrl(fromShortLink) &&
+    !isBrandedShortHost(fromShortLink)
+  ) {
     return fromShortLink;
   }
 
@@ -100,7 +107,11 @@ export function resolveQrRedirectUrl({
       : null);
 
   if (resolvedSlug && origin) return `${origin}/${resolvedSlug}`;
-  if (fromShortUrl && isHttpUrl(fromShortUrl) && !isBrandedShortHost(fromShortUrl)) {
+  if (
+    fromShortUrl &&
+    isHttpUrl(fromShortUrl) &&
+    !isBrandedShortHost(fromShortUrl)
+  ) {
     return fromShortUrl;
   }
   if (dest) return dest;

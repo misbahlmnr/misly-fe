@@ -5,6 +5,7 @@ export { LinksPage } from "./pages/links-page";
 export {
   formatShortLabel,
   getShortDomain,
+  getShortOrigin,
   resolveShortUrl,
   toAbsoluteShortUrl,
 } from "./lib/url";

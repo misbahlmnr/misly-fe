@@ -25,6 +25,11 @@ export { linkStatusSchema, type LinkStatus } from "@/features/links/schema/link-
 export { apiLinkSchema, type ApiLink } from "@/features/links/schema/api-link-schema";
 
 export {
+  resolveLinkSchema,
+  type ResolveLink,
+} from "@/features/links/schema/resolve-link-schema";
+
+export {
   managedLinkSchema,
   managedLinksSchema,
   mapApiLinkToManagedLink,

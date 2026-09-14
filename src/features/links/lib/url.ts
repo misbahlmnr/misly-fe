@@ -13,6 +13,12 @@ function isLocalHost(host: string) {
   return hostname === "localhost" || hostname === "127.0.0.1";
 }
 
+export function getShortOrigin() {
+  const host = getShortDomain();
+  const protocol = isLocalHost(host) ? "http" : "https";
+  return `${protocol}://${host}`;
+}
+
 export function toAbsoluteShortUrl(url: string) {
   const trimmed = url.trim();
   if (!trimmed) return trimmed;
@@ -37,7 +43,5 @@ export function resolveShortUrl(
   const resolvedSlug = slug?.trim();
   if (!resolvedSlug) return "";
 
-  const host = getShortDomain();
-  const protocol = isLocalHost(host) ? "http" : "https";
-  return `${protocol}://${host}/${resolvedSlug}`;
+  return `${getShortOrigin()}/${resolvedSlug}`;
 }
