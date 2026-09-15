@@ -8,11 +8,12 @@ import { HardLink } from "@/components/shared/hard-button";
 import { Button } from "@/components/ui/button";
 import { dashboardQrCodeEditPath, routes } from "@/config/routes";
 import { QrStyledPreview } from "@/features/qr-codes/components/qr-styled-preview";
+import { buildQrScanUrl } from "@/features/qr-codes/lib/url";
 import type { QrCodeItem } from "@/features/qr-codes/types";
 
 export function QrAnalyticsHeader({ item }: { item: QrCodeItem }) {
   const [copied, setCopied] = useState(false);
-  const href = item.shortUrl;
+  const href = buildQrScanUrl(item.id);
 
   async function handleCopy() {
     try {
@@ -29,6 +30,7 @@ export function QrAnalyticsHeader({ item }: { item: QrCodeItem }) {
       <div className="flex gap-4">
         <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-surface-container-lowest p-2 ink-border shadow-hard">
           <QrStyledPreview
+            key={href}
             data={href}
             styles={item.styles}
             logoUrl={item.logoUrl}
@@ -54,7 +56,7 @@ export function QrAnalyticsHeader({ item }: { item: QrCodeItem }) {
               rel="noreferrer"
               className="flex items-center gap-1 text-base font-bold text-primary hover:underline"
             >
-              {item.shortUrl}
+              {href}
               <ExternalLink className="size-4" strokeWidth={2.25} />
             </a>
             <span className="hidden text-outline-variant sm:inline">|</span>

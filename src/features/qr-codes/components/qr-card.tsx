@@ -36,7 +36,8 @@ import { buildQrScanUrl } from "../lib/url";
 
 export function QrCard({ item }: { item: QrCodeItem }) {
   const [copied, setCopied] = useState(false);
-  const href = item.shortUrl;
+  const scanUrl = buildQrScanUrl(item.id);
+  const href = scanUrl;
 
   async function copyLink() {
     try {
@@ -62,7 +63,8 @@ export function QrCard({ item }: { item: QrCodeItem }) {
     <div className="flex flex-col rounded-xl bg-surface-container-lowest ink-border shadow-hard">
       <div className="relative flex h-56 items-center justify-center overflow-hidden rounded-t-xl border-b-2 border-on-surface bg-surface-bright p-8">
         <QrStyledPreview
-          data={buildQrScanUrl(item.id)}
+          key={scanUrl}
+          data={scanUrl}
           styles={item.styles}
           logoUrl={item.logoUrl}
           size={176}
@@ -75,12 +77,12 @@ export function QrCard({ item }: { item: QrCodeItem }) {
           {item.title}
         </h3>
         <a
-          href={href}
+          href={item.destinationUrl}
           target="_blank"
           rel="noreferrer"
-          className="mb-4 flex items-center gap-1 text-sm font-medium text-primary hover:underline truncate"
+          className="mb-4 flex items-center gap-1 text-sm font-medium text-primary hover:underline justify-between"
         >
-          {item.shortUrl}
+          <span className="inline-block truncate">{item.destinationUrl}</span>
           <ExternalLink className="size-4" strokeWidth={2.25} />
         </a>
 

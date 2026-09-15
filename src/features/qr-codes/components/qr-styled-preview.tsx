@@ -2,10 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-import {
-  buildQrOptions,
-  createQrInstance,
-} from "@/features/qr-codes/lib/qr-styling";
+import { createQrInstance } from "@/features/qr-codes/lib/qr-styling";
 import type { QrStyles } from "@/features/qr-codes/schema";
 import { cn } from "@/lib/utils";
 
@@ -37,18 +34,16 @@ export function QrStyledPreview({
       if (!containerRef.current) return;
 
       const parsedStyles = JSON.parse(stylesKey) as QrStyles;
-      const options = buildQrOptions(data, parsedStyles, logoUrl, size);
 
-      if (!qrRef.current) {
-        const qr = await createQrInstance(data, parsedStyles, logoUrl, size);
-        if (cancelled || !containerRef.current) return;
-        containerRef.current.replaceChildren();
-        qr.append(containerRef.current);
-        qrRef.current = qr;
-        return;
-      }
+      // Recreate on data change. qr-code-styling update() often keeps the old payload.
+      qrRef.current = null;
+      containerRef.current.replaceChildren();
 
-      qrRef.current.update(options);
+      const qr = await createQrInstance(data, parsedStyles, logoUrl, size);
+      if (cancelled || !containerRef.current) return;
+      containerRef.current.replaceChildren();
+      qr.append(containerRef.current);
+      qrRef.current = qr;
     }
 
     void mount();

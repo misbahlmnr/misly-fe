@@ -33,7 +33,7 @@ import { QrStyledPreview } from "@/features/qr-codes/components/qr-styled-previe
 import { useCreateQrCode } from "@/features/qr-codes/hooks/use-create-qr-code";
 import { useQrLinkOptions } from "@/features/qr-codes/hooks/use-qr-link-options";
 import { downloadStyledQr } from "@/features/qr-codes/lib/qr-styling";
-import { withShortOrigin } from "@/features/qr-codes/lib/url";
+import { buildQrScanUrl, withShortOrigin } from "@/features/qr-codes/lib/url";
 import {
   applyQrPreset,
   createQrSchema,
@@ -91,8 +91,9 @@ export function CreateQrPage({
   const format = useWatch({ control, name: "format" }) ?? "png";
 
   const selectedLink = links.find((link) => link.id === linkId);
-  const previewUrl =
-    source === "existing"
+  const previewUrl = initial?.id
+    ? buildQrScanUrl(initial.id)
+    : source === "existing"
       ? withShortOrigin(selectedLink?.shortUrl || initial?.shortUrl)
       : destinationUrl || withShortOrigin(initial?.shortUrl);
   const logoPreview = /^https?:\/\/.+/i.test(logoUrl.trim())
@@ -140,7 +141,7 @@ export function CreateQrPage({
 
     if (mode === "edit") {
       await downloadStyledQr({
-        data: withShortOrigin(initial?.shortUrl || selectedLink?.shortUrl),
+        data: buildQrScanUrl(initial?.id ?? ""),
         styles: qrStylesFromValues(values),
         logoUrl: values.logoUrl,
         name: values.title || "qr-code",
@@ -163,7 +164,7 @@ export function CreateQrPage({
     if (!result.success || !result.data) return;
 
     await downloadStyledQr({
-      data: withShortOrigin(result.data.shortUrl || result.data.destinationUrl),
+      data: buildQrScanUrl(result.data.id),
       styles: result.data.styles,
       logoUrl: result.data.logoUrl,
       name: result.data.title || values.title || "qr-code",
@@ -424,6 +425,7 @@ export function CreateQrPage({
 
               <div className="mb-5 flex aspect-square w-full items-center justify-center rounded-xl bg-surface-bright p-5 ink-border">
                 <QrStyledPreview
+                  key={previewUrl}
                   data={previewUrl}
                   styles={liveStyles}
                   logoUrl={logoUrl}

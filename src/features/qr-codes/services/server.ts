@@ -19,6 +19,11 @@ export async function getQrCodesOnServer(): Promise<QrCodeItem[]> {
   });
 }
 
+export async function getQrByIdOnServer(id: string) {
+  const items = await getQrCodesOnServer();
+  return items.find((item) => item.id === id);
+}
+
 export async function createQrCodeOnServer(payload: CreateQrPayload) {
   const data = await api<unknown>(restApiPaths.qrCodes.create, {
     method: "POST",

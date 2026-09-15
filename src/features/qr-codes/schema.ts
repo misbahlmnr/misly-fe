@@ -167,6 +167,7 @@ export const apiQrCodeSchema = z.object({
   shortUrl: z.string().optional(),
   linkId: z.string().nullable().optional(),
   link: apiLinkSchema.nullable().optional(),
+  scanCount: z.number(),
   createdAt: z.string(),
   updatedAt: z.string().optional(),
 });
@@ -197,7 +198,7 @@ export function mapApiQrToQrCodeItem(item: ApiQrCode): QrCodeItem {
     title: item.title,
     shortUrl: withShortOrigin(item.shortUrl ?? item.destinationUrl),
     destinationUrl: item.destinationUrl,
-    scans: 0,
+    scans: item.scanCount,
     createdLabel: formatDate(item.createdAt),
     createdAt: item.createdAt,
     updatedAt: item.updatedAt,
