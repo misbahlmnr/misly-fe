@@ -33,11 +33,17 @@ import { downloadStyledQr } from "@/features/qr-codes/lib/qr-styling";
 import type { QrDownloadExtension } from "@/features/qr-codes/lib/qr-styling";
 import type { QrCodeItem } from "@/features/qr-codes/types";
 import { buildQrScanUrl } from "../lib/url";
+import { useDeleteQrCode } from "../hooks/use-delete-qr-code";
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 
 export function QrCard({ item }: { item: QrCodeItem }) {
   const [copied, setCopied] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
   const scanUrl = buildQrScanUrl(item.id);
   const href = scanUrl;
+
+  const deleteQrCode = useDeleteQrCode();
 
   async function copyLink() {
     try {
@@ -58,6 +64,12 @@ export function QrCard({ item }: { item: QrCodeItem }) {
       extension,
     });
   }
+
+  const handleConfirmDelete = () => {
+    deleteQrCode.mutate(item.id, {
+      onSuccess: () => setConfirmOpen(false),
+    });
+  };
 
   return (
     <div className="flex flex-col rounded-xl bg-surface-container-lowest ink-border shadow-hard">
@@ -162,7 +174,10 @@ export function QrCard({ item }: { item: QrCodeItem }) {
                 </DropdownMenuItem>
               )}
               <DropdownMenuSeparator />
-              <DropdownMenuItem variant="destructive">
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={() => setConfirmOpen(true)}
+              >
                 <Trash2 className="size-4" strokeWidth={2.25} />
                 Delete
               </DropdownMenuItem>
@@ -170,6 +185,18 @@ export function QrCard({ item }: { item: QrCodeItem }) {
           </DropdownMenu>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title="Delete QR code?"
+        description={`"${item.title}" will be permanently deleted. This action cannot be undone.`}
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        destructive
+        isLoading={deleteQrCode.isPending}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   );
 }

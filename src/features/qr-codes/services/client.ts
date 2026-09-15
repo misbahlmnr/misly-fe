@@ -42,13 +42,23 @@ export async function createQrCodeOnClient(
   values: CreateQrValues,
   selectedDestinationUrl?: string,
 ) {
-  console.log("createQrCodeOnClient", values, selectedDestinationUrl);
   const payload = toCreateQrPayload(values, selectedDestinationUrl);
 
   const response = await axios.post<CreateQrApiResponse>(
     restApiPaths.qrCodes.create,
     payload,
     { validateStatus: () => true },
+  );
+
+  return response.data;
+}
+
+export async function deleteQrCodeOnClient(id: string) {
+  const response = await axios.delete<unknown>(
+    restApiPaths.qrCodes.delete(id),
+    {
+      validateStatus: () => true,
+    },
   );
 
   return response.data;

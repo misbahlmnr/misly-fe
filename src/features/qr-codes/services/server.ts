@@ -32,3 +32,9 @@ export async function createQrCodeOnServer(payload: CreateQrPayload) {
 
   return mapApiQrToQrCodeItem(apiQrCodeSchema.parse(data));
 }
+
+export async function deleteQrCodeOnServer(id: string) {
+  return api<unknown>(restApiPaths.qrCodes.delete(id), {
+    method: "DELETE",
+  });
+}
