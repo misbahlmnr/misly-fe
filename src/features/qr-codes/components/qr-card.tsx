@@ -31,12 +31,11 @@ import { isProPlan } from "@/config/user";
 import { QrStyledPreview } from "@/features/qr-codes/components/qr-styled-preview";
 import { downloadStyledQr } from "@/features/qr-codes/lib/qr-styling";
 import type { QrDownloadExtension } from "@/features/qr-codes/lib/qr-styling";
-import { toAbsoluteUrl } from "@/features/qr-codes/lib/url";
 import type { QrCodeItem } from "@/features/qr-codes/types";
 
 export function QrCard({ item }: { item: QrCodeItem }) {
   const [copied, setCopied] = useState(false);
-  const href = toAbsoluteUrl(item.shortUrl);
+  const href = item.shortUrl;
 
   async function copyLink() {
     try {
@@ -78,9 +77,9 @@ export function QrCard({ item }: { item: QrCodeItem }) {
           href={href}
           target="_blank"
           rel="noreferrer"
-          className="mb-4 flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+          className="mb-4 flex items-center gap-1 text-sm font-medium text-primary hover:underline truncate"
         >
-          {item.shortLabel}
+          {item.shortUrl}
           <ExternalLink className="size-4" strokeWidth={2.25} />
         </a>
 

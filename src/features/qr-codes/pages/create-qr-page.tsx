@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { ArrowLeft, ImageIcon, Loader2, Save } from "lucide-react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
-import { useForm, useWatch } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowLeft, ImageIcon, Loader2, Save } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 
-import { FieldError } from "@/components/shared/field-error"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { FieldError } from "@/components/shared/field-error";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -17,8 +17,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { routes } from "@/config/routes"
+} from "@/components/ui/select";
+import { routes } from "@/config/routes";
 import {
   ColorField,
   CornerStylePicker,
@@ -28,40 +28,40 @@ import {
   FormatToggle,
   SourceToggle,
   StylePresetPicker,
-} from "@/features/qr-codes/components/qr-editor-controls"
-import { QrStyledPreview } from "@/features/qr-codes/components/qr-styled-preview"
-import { useCreateQrCode } from "@/features/qr-codes/hooks/use-create-qr-code"
-import { useQrLinkOptions } from "@/features/qr-codes/hooks/use-qr-link-options"
-import { downloadStyledQr } from "@/features/qr-codes/lib/qr-styling"
-import { QR_PLACEHOLDER_URL } from "@/features/qr-codes/lib/url"
+} from "@/features/qr-codes/components/qr-editor-controls";
+import { QrStyledPreview } from "@/features/qr-codes/components/qr-styled-preview";
+import { useCreateQrCode } from "@/features/qr-codes/hooks/use-create-qr-code";
+import { useQrLinkOptions } from "@/features/qr-codes/hooks/use-qr-link-options";
+import { downloadStyledQr } from "@/features/qr-codes/lib/qr-styling";
+import { withShortOrigin } from "@/features/qr-codes/lib/url";
 import {
   applyQrPreset,
   createQrSchema,
   qrStylesFromValues,
   valuesFromQr,
   type CreateQrValues,
-} from "@/features/qr-codes/schema"
+} from "@/features/qr-codes/schema";
 import type {
   QrCodeItem,
   QrEditorTab,
   QrStyle,
-} from "@/features/qr-codes/types"
-import { cn } from "@/lib/utils"
+} from "@/features/qr-codes/types";
+import { cn } from "@/lib/utils";
 
 export function CreateQrPage({
   mode,
   initial,
   initialTab = "content",
 }: {
-  mode: "create" | "edit"
-  initial?: QrCodeItem
-  initialTab?: QrEditorTab
+  mode: "create" | "edit";
+  initial?: QrCodeItem;
+  initialTab?: QrEditorTab;
 }) {
-  const router = useRouter()
-  const [tab, setTab] = useState<QrEditorTab>(initialTab)
-  const createQr = useCreateQrCode()
-  const { data: linksResult, isLoading: linksLoading } = useQrLinkOptions()
-  const links = linksResult?.data ?? []
+  const router = useRouter();
+  const [tab, setTab] = useState<QrEditorTab>(initialTab);
+  const createQr = useCreateQrCode();
+  const { data: linksResult, isLoading: linksLoading } = useQrLinkOptions();
+  const links = linksResult?.data ?? [];
 
   const {
     register,
@@ -72,29 +72,32 @@ export function CreateQrPage({
   } = useForm<CreateQrValues>({
     resolver: zodResolver(createQrSchema),
     defaultValues: valuesFromQr(initial),
-  })
+  });
 
-  const source = useWatch({ control, name: "source" }) ?? "existing"
-  const linkId = useWatch({ control, name: "linkId" }) ?? ""
-  const destinationUrl = useWatch({ control, name: "destinationUrl" }) ?? ""
-  const preset = useWatch({ control, name: "preset" }) ?? "default"
-  const dotsType = useWatch({ control, name: "dotsType" }) ?? "square"
-  const dotsColor = useWatch({ control, name: "dotsColor" }) ?? "#161d1f"
+  const source = useWatch({ control, name: "source" }) ?? "existing";
+  const linkId = useWatch({ control, name: "linkId" }) ?? "";
+  const destinationUrl = useWatch({ control, name: "destinationUrl" }) ?? "";
+  const preset = useWatch({ control, name: "preset" }) ?? "default";
+  const dotsType = useWatch({ control, name: "dotsType" }) ?? "square";
+  const dotsColor = useWatch({ control, name: "dotsColor" }) ?? "#161d1f";
   const cornersSquareType =
-    useWatch({ control, name: "cornersSquareType" }) ?? "square"
-  const cornersDotType = useWatch({ control, name: "cornersDotType" }) ?? "square"
-  const cornersColor = useWatch({ control, name: "cornersColor" }) ?? "#161d1f"
+    useWatch({ control, name: "cornersSquareType" }) ?? "square";
+  const cornersDotType =
+    useWatch({ control, name: "cornersDotType" }) ?? "square";
+  const cornersColor = useWatch({ control, name: "cornersColor" }) ?? "#161d1f";
   const backgroundColor =
-    useWatch({ control, name: "backgroundColor" }) ?? "#ffffff"
-  const logoUrl = useWatch({ control, name: "logoUrl" }) ?? ""
-  const format = useWatch({ control, name: "format" }) ?? "png"
+    useWatch({ control, name: "backgroundColor" }) ?? "#ffffff";
+  const logoUrl = useWatch({ control, name: "logoUrl" }) ?? "";
+  const format = useWatch({ control, name: "format" }) ?? "png";
 
-  const selectedLink = links.find((link) => link.id === linkId)
+  const selectedLink = links.find((link) => link.id === linkId);
   const previewUrl =
     source === "existing"
-      ? selectedLink?.destinationUrl || initial?.shortUrl || QR_PLACEHOLDER_URL
-      : destinationUrl || initial?.shortUrl || QR_PLACEHOLDER_URL
-  const logoPreview = /^https?:\/\/.+/i.test(logoUrl.trim()) ? logoUrl.trim() : ""
+      ? withShortOrigin(selectedLink?.shortUrl || initial?.shortUrl)
+      : destinationUrl || withShortOrigin(initial?.shortUrl);
+  const logoPreview = /^https?:\/\/.+/i.test(logoUrl.trim())
+    ? logoUrl.trim()
+    : "";
 
   const liveStyles = qrStylesFromValues({
     dotsType,
@@ -103,7 +106,7 @@ export function CreateQrPage({
     cornersDotType,
     cornersColor,
     backgroundColor,
-  })
+  });
 
   const linkItems = [
     {
@@ -114,60 +117,60 @@ export function CreateQrPage({
       label: `${link.title || link.slug} · /${link.slug}`,
       value: link.id,
     })),
-  ]
+  ];
 
-  const isSaving = createQr.isPending
+  const isSaving = createQr.isPending;
 
   function applyPreset(next: QrStyle) {
-    const nextValues = applyQrPreset(next)
-    setValue("preset", nextValues.preset)
-    setValue("dotsType", nextValues.dotsType)
-    setValue("dotsColor", nextValues.dotsColor)
-    setValue("cornersSquareType", nextValues.cornersSquareType)
-    setValue("cornersDotType", nextValues.cornersDotType)
-    setValue("cornersColor", nextValues.cornersColor)
-    setValue("backgroundColor", nextValues.backgroundColor)
+    const nextValues = applyQrPreset(next);
+    setValue("preset", nextValues.preset);
+    setValue("dotsType", nextValues.dotsType);
+    setValue("dotsColor", nextValues.dotsColor);
+    setValue("cornersSquareType", nextValues.cornersSquareType);
+    setValue("cornersDotType", nextValues.cornersDotType);
+    setValue("cornersColor", nextValues.cornersColor);
+    setValue("backgroundColor", nextValues.backgroundColor);
   }
 
   async function onSubmit(values: CreateQrValues) {
     const selectedDestinationUrl =
       values.source === "existing"
         ? selectedLink?.destinationUrl
-        : values.destinationUrl
+        : values.destinationUrl;
 
     if (mode === "edit") {
       await downloadStyledQr({
-        data: initial?.shortUrl || selectedDestinationUrl || QR_PLACEHOLDER_URL,
+        data: withShortOrigin(initial?.shortUrl || selectedLink?.shortUrl),
         styles: qrStylesFromValues(values),
         logoUrl: values.logoUrl,
         name: values.title || "qr-code",
         extension: values.format,
-      })
-      router.push(routes.dashboardQrCodes)
-      return
+      });
+      router.push(routes.dashboardQrCodes);
+      return;
     }
 
-    let result
+    let result;
     try {
       result = await createQr.mutateAsync({
         values,
         selectedDestinationUrl,
-      })
+      });
     } catch {
-      return
+      return;
     }
 
-    if (!result.success || !result.data) return
+    if (!result.success || !result.data) return;
 
     await downloadStyledQr({
-      data: result.data.shortUrl || result.data.destinationUrl,
+      data: withShortOrigin(result.data.shortUrl || result.data.destinationUrl),
       styles: result.data.styles,
       logoUrl: result.data.logoUrl,
       name: result.data.title || values.title || "qr-code",
       extension: values.format,
-    })
+    });
 
-    router.push(routes.dashboardQrCodes)
+    router.push(routes.dashboardQrCodes);
   }
 
   return (
@@ -238,7 +241,9 @@ export function CreateQrPage({
                       items={linkItems}
                       value={linkId || null}
                       onValueChange={(value) => {
-                        setValue("linkId", value ?? "", { shouldValidate: true })
+                        setValue("linkId", value ?? "", {
+                          shouldValidate: true,
+                        });
                       }}
                     >
                       <SelectTrigger
@@ -254,7 +259,7 @@ export function CreateQrPage({
                               <SelectItem key={item.value} value={item.value}>
                                 {item.label}
                               </SelectItem>
-                            ) : null
+                            ) : null,
                           )}
                         </SelectGroup>
                       </SelectContent>
@@ -317,11 +322,11 @@ export function CreateQrPage({
                   value={cornersSquareType}
                   color={cornersColor}
                   onChange={(next) => {
-                    setValue("cornersSquareType", next)
+                    setValue("cornersSquareType", next);
                     setValue(
                       "cornersDotType",
-                      next === "dot" ? "dot" : "square"
-                    )
+                      next === "dot" ? "dot" : "square",
+                    );
                   }}
                 />
 
@@ -330,8 +335,8 @@ export function CreateQrPage({
                     label="Foreground"
                     value={dotsColor}
                     onChange={(value) => {
-                      setValue("dotsColor", value)
-                      setValue("cornersColor", value)
+                      setValue("dotsColor", value);
+                      setValue("cornersColor", value);
                     }}
                     error={errors.dotsColor?.message}
                   />
@@ -360,14 +365,16 @@ export function CreateQrPage({
                 <div
                   className={cn(
                     "flex items-center gap-4 rounded-xl bg-surface-bright p-4 ink-border",
-                    logoPreview && "shadow-hard-pressed"
+                    logoPreview && "shadow-hard-pressed",
                   )}
                 >
                   <div className="flex size-16 shrink-0 items-center justify-center rounded-lg bg-surface-container-lowest ink-border">
                     <ImageIcon
                       className={cn(
                         "size-6",
-                        logoPreview ? "text-primary" : "text-on-surface-variant"
+                        logoPreview
+                          ? "text-primary"
+                          : "text-on-surface-variant",
                       )}
                       strokeWidth={2.25}
                     />
@@ -468,5 +475,5 @@ export function CreateQrPage({
         </div>
       </form>
     </div>
-  )
+  );
 }

@@ -1,119 +1,20 @@
 import { getShortOrigin } from "@/features/links/lib/url";
 
-export const QR_PLACEHOLDER_URL = "https://misly.link";
-export const SHORT_LINK_BRAND_HOST = "misly.link";
-
-export function toAbsoluteUrl(url: string) {
-  const trimmed = url.trim();
-
-  if (!trimmed) return trimmed;
-  if (/^https?:\/\//i.test(trimmed)) return trimmed;
-
-  return `https://${trimmed}`;
-}
-
-export function getShortenerOrigin() {
-  return getShortOrigin();
-}
-
-export function slugFromUrl(url: string) {
-  try {
-    const path = new URL(toAbsoluteUrl(url)).pathname.replace(/^\/+|\/+$/g, "");
-    if (!path || path.includes("/")) return null;
-    return path;
-  } catch {
-    const withoutHost = url
-      .replace(/^https?:\/\//i, "")
-      .replace(/^[^/]+\//, "")
-      .replace(/\/$/, "");
-    if (!withoutHost || withoutHost.includes("/")) return null;
-    return withoutHost;
-  }
-}
-
-function normalizeRedirectCandidate(url?: string | null) {
+export function withShortOrigin(url?: string | null) {
   const trimmed = url?.trim() ?? "";
-  if (!trimmed) return "";
-  if (trimmed.startsWith("/")) {
-    const origin = getShortenerOrigin();
-    return origin ? `${origin}${trimmed}` : trimmed;
-  }
-  return toAbsoluteUrl(trimmed);
-}
+  if (!trimmed) return getShortOrigin();
 
-function isHttpUrl(url: string) {
   try {
-    const parsed = new URL(url);
-    return parsed.protocol === "http:" || parsed.protocol === "https:";
+    const href = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+    const parsed = new URL(href);
+    const path = parsed.pathname.replace(/\/$/, "");
+    return `${getShortOrigin()}${path}${parsed.search}`;
   } catch {
-    return false;
+    if (trimmed.startsWith("/")) return `${getShortOrigin()}${trimmed}`;
+    return `${getShortOrigin()}/${trimmed.replace(/^\/+/, "")}`;
   }
 }
 
-function isBrandedShortHost(url: string) {
-  try {
-    return (
-      new URL(url).hostname.replace(/^www\./, "") === SHORT_LINK_BRAND_HOST
-    );
-  } catch {
-    return false;
-  }
-}
-
-function sameHref(a: string, b: string) {
-  return a.replace(/\/$/, "") === b.replace(/\/$/, "");
-}
-
-export function resolveQrRedirectUrl({
-  shortLink,
-  shortUrl,
-  slug,
-  destinationUrl,
-}: {
-  shortLink?: string | null;
-  shortUrl?: string | null;
-  slug?: string | null;
-  destinationUrl?: string | null;
-}) {
-  const origin = getShortenerOrigin();
-  const dest = destinationUrl ? toAbsoluteUrl(destinationUrl) : "";
-  const fromShortLink = normalizeRedirectCandidate(shortLink);
-  const fromShortUrl = normalizeRedirectCandidate(shortUrl);
-
-  if (
-    fromShortLink &&
-    isHttpUrl(fromShortLink) &&
-    !isBrandedShortHost(fromShortLink)
-  ) {
-    return fromShortLink;
-  }
-
-  if (
-    fromShortUrl &&
-    isHttpUrl(fromShortUrl) &&
-    !isBrandedShortHost(fromShortUrl) &&
-    (!dest || !sameHref(fromShortUrl, dest))
-  ) {
-    return fromShortUrl;
-  }
-
-  const resolvedSlug =
-    slug ||
-    (fromShortLink && isBrandedShortHost(fromShortLink)
-      ? slugFromUrl(fromShortLink)
-      : null) ||
-    (fromShortUrl && isBrandedShortHost(fromShortUrl)
-      ? slugFromUrl(fromShortUrl)
-      : null);
-
-  if (resolvedSlug && origin) return `${origin}/${resolvedSlug}`;
-  if (
-    fromShortUrl &&
-    isHttpUrl(fromShortUrl) &&
-    !isBrandedShortHost(fromShortUrl)
-  ) {
-    return fromShortUrl;
-  }
-  if (dest) return dest;
-  return QR_PLACEHOLDER_URL;
+export function buildQrScanUrl(qrCodeId: string) {
+  return `${getShortOrigin()}/q/${qrCodeId}`;
 }

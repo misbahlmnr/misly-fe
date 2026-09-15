@@ -1,8 +1,4 @@
-import {
-  resolveQrStyles,
-  type QrStyles,
-} from "@/features/qr-codes/schema";
-import { QR_PLACEHOLDER_URL, toAbsoluteUrl } from "@/features/qr-codes/lib/url";
+import { resolveQrStyles, type QrStyles } from "@/features/qr-codes/schema";
 
 export type QrDownloadExtension = "png" | "svg";
 
@@ -28,7 +24,7 @@ export function buildQrOptions(
     width: size,
     height: size,
     type: "svg" as const,
-    data: toAbsoluteUrl(data) || QR_PLACEHOLDER_URL,
+    data: data,
     image,
     margin: 8,
     qrOptions: {

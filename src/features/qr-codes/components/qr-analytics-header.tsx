@@ -1,27 +1,26 @@
-"use client"
+"use client";
 
-import { ArrowLeft, Check, Copy, ExternalLink, Pencil } from "lucide-react"
-import Link from "next/link"
-import { useState } from "react"
+import { ArrowLeft, Check, Copy, ExternalLink, Pencil } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
-import { HardLink } from "@/components/shared/hard-button"
-import { Button } from "@/components/ui/button"
-import { dashboardQrCodeEditPath, routes } from "@/config/routes"
-import { QrStyledPreview } from "@/features/qr-codes/components/qr-styled-preview"
-import { toAbsoluteUrl } from "@/features/qr-codes/lib/url"
-import type { QrCodeItem } from "@/features/qr-codes/types"
+import { HardLink } from "@/components/shared/hard-button";
+import { Button } from "@/components/ui/button";
+import { dashboardQrCodeEditPath, routes } from "@/config/routes";
+import { QrStyledPreview } from "@/features/qr-codes/components/qr-styled-preview";
+import type { QrCodeItem } from "@/features/qr-codes/types";
 
 export function QrAnalyticsHeader({ item }: { item: QrCodeItem }) {
-  const [copied, setCopied] = useState(false)
-  const href = toAbsoluteUrl(item.shortUrl)
+  const [copied, setCopied] = useState(false);
+  const href = item.shortUrl;
 
   async function handleCopy() {
     try {
-      await navigator.clipboard.writeText(href)
-      setCopied(true)
-      window.setTimeout(() => setCopied(false), 1500)
+      await navigator.clipboard.writeText(href);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
     } catch {
-      setCopied(false)
+      setCopied(false);
     }
   }
 
@@ -55,7 +54,7 @@ export function QrAnalyticsHeader({ item }: { item: QrCodeItem }) {
               rel="noreferrer"
               className="flex items-center gap-1 text-base font-bold text-primary hover:underline"
             >
-              {item.shortLabel}
+              {item.shortUrl}
               <ExternalLink className="size-4" strokeWidth={2.25} />
             </a>
             <span className="hidden text-outline-variant sm:inline">|</span>
@@ -91,5 +90,5 @@ export function QrAnalyticsHeader({ item }: { item: QrCodeItem }) {
         </HardLink>
       </div>
     </div>
-  )
+  );
 }
