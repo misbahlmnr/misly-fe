@@ -32,6 +32,7 @@ import { QrStyledPreview } from "@/features/qr-codes/components/qr-styled-previe
 import { downloadStyledQr } from "@/features/qr-codes/lib/qr-styling";
 import type { QrDownloadExtension } from "@/features/qr-codes/lib/qr-styling";
 import type { QrCodeItem } from "@/features/qr-codes/types";
+import { buildQrScanUrl } from "../lib/url";
 
 export function QrCard({ item }: { item: QrCodeItem }) {
   const [copied, setCopied] = useState(false);
@@ -61,7 +62,7 @@ export function QrCard({ item }: { item: QrCodeItem }) {
     <div className="flex flex-col rounded-xl bg-surface-container-lowest ink-border shadow-hard">
       <div className="relative flex h-56 items-center justify-center overflow-hidden rounded-t-xl border-b-2 border-on-surface bg-surface-bright p-8">
         <QrStyledPreview
-          data={href}
+          data={buildQrScanUrl(item.id)}
           styles={item.styles}
           logoUrl={item.logoUrl}
           size={176}

@@ -22,9 +22,12 @@ type CreateQrApiResponse = {
 };
 
 export async function getQrCodesOnClient(): Promise<QrCodeItem[]> {
-  const response = await axios.get<QrCodesApiResponse>(restApiPaths.qrCodes.get, {
-    validateStatus: () => true,
-  });
+  const response = await axios.get<QrCodesApiResponse>(
+    restApiPaths.qrCodes.get,
+    {
+      validateStatus: () => true,
+    },
+  );
 
   const body = response.data;
 
@@ -39,6 +42,7 @@ export async function createQrCodeOnClient(
   values: CreateQrValues,
   selectedDestinationUrl?: string,
 ) {
+  console.log("createQrCodeOnClient", values, selectedDestinationUrl);
   const payload = toCreateQrPayload(values, selectedDestinationUrl);
 
   const response = await axios.post<CreateQrApiResponse>(
