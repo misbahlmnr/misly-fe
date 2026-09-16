@@ -3,7 +3,7 @@ import { z } from "zod";
 import { formatDate } from "@/lib/formatter";
 
 import { apiLinkSchema } from "../links/schema";
-import { withShortOrigin } from "./lib/url";
+import { withShortOrigin } from "./common/lib/url";
 
 export const qrStylePresetSchema = z.enum(["default", "brand", "circular"]);
 export type QrStylePreset = z.infer<typeof qrStylePresetSchema>;

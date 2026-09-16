@@ -8,7 +8,7 @@ import { HardLink } from "@/components/shared/hard-button";
 import { Button } from "@/components/ui/button";
 import { dashboardQrCodeEditPath, routes } from "@/config/routes";
 import { QrStyledPreview } from "@/features/qr-codes/components/qr-styled-preview";
-import { buildQrScanUrl } from "@/features/qr-codes/lib/url";
+import { buildQrScanUrl } from "@/features/qr-codes/common/lib/url";
 import type { QrCodeItem } from "@/features/qr-codes/types";
 
 export function QrAnalyticsHeader({ item }: { item: QrCodeItem }) {

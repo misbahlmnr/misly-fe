@@ -32,8 +32,11 @@ import {
 import { QrStyledPreview } from "@/features/qr-codes/components/qr-styled-preview";
 import { useCreateQrCode } from "@/features/qr-codes/hooks/use-create-qr-code";
 import { useQrLinkOptions } from "@/features/qr-codes/hooks/use-qr-link-options";
-import { downloadStyledQr } from "@/features/qr-codes/lib/qr-styling";
-import { buildQrScanUrl, withShortOrigin } from "@/features/qr-codes/lib/url";
+import { downloadStyledQr } from "@/features/qr-codes/common/lib/qr-styling";
+import {
+  buildQrScanUrl,
+  withShortOrigin,
+} from "@/features/qr-codes/common/lib/url";
 import {
   applyQrPreset,
   createQrSchema,

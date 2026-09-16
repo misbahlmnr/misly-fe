@@ -29,10 +29,10 @@ import {
 } from "@/config/routes";
 import { isProPlan } from "@/config/user";
 import { QrStyledPreview } from "@/features/qr-codes/components/qr-styled-preview";
-import { downloadStyledQr } from "@/features/qr-codes/lib/qr-styling";
-import type { QrDownloadExtension } from "@/features/qr-codes/lib/qr-styling";
+import { downloadStyledQr } from "@/features/qr-codes/common/lib/qr-styling";
+import type { QrDownloadExtension } from "@/features/qr-codes/common/lib/qr-styling";
 import type { QrCodeItem } from "@/features/qr-codes/types";
-import { buildQrScanUrl } from "../lib/url";
+import { buildQrScanUrl } from "../common/lib/url";
 import { useDeleteQrCode } from "../hooks/use-delete-qr-code";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 

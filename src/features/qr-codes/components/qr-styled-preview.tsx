@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-import { createQrInstance } from "@/features/qr-codes/lib/qr-styling";
+import { createQrInstance } from "@/features/qr-codes/common/lib/qr-styling";
 import type { QrStyles } from "@/features/qr-codes/schema";
 import { cn } from "@/lib/utils";
 
