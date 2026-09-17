@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { CreateQrButton } from "@/features/qr-codes/components/create-qr-button";
 import { QrCard } from "@/features/qr-codes/components/qr-card";
+import { QrCodesPageSkeleton } from "@/features/qr-codes/components/skeleton/qr-codes-page-skeleton";
 import { useGetQrCodes } from "@/features/qr-codes/hooks/use-get-qr-codes";
 import type { QrCodeItem } from "@/features/qr-codes/types";
 import SelectFilter from "../components/select-filter";
@@ -27,7 +28,7 @@ const sortItems = [
 ];
 
 export function QrCodesPage() {
-  const { data = [], isLoading, isError, refetch } = useGetQrCodes();
+  const { data = [], isLoading } = useGetQrCodes();
 
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
@@ -44,6 +45,10 @@ export function QrCodesPage() {
   );
 
   const summary = useQrSummary(shortItems);
+
+  if (isLoading) {
+    return <QrCodesPageSkeleton />;
+  }
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
@@ -136,29 +141,7 @@ export function QrCodesPage() {
         />
       </div>
 
-      {isLoading ? (
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <div
-              key={index}
-              className="h-80 animate-pulse rounded-xl bg-surface-container ink-border"
-            />
-          ))}
-        </div>
-      ) : isError ? (
-        <div className="space-y-3 text-center">
-          <p className="font-label font-bold text-outline">
-            Failed to load QR codes.
-          </p>
-          <button
-            type="button"
-            onClick={() => void refetch()}
-            className="font-label text-sm font-bold text-primary hover:underline"
-          >
-            Try again
-          </button>
-        </div>
-      ) : shortItems.length === 0 ? (
+      {shortItems.length === 0 ? (
         <p className="text-center font-label font-bold text-outline">
           {data.length === 0
             ? "No QR codes yet."
