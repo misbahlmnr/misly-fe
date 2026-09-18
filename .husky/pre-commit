@@ -1,0 +1,9 @@
+echo '🏗️👷 Be patient Bossque, this might take a while... 🏗️👷'
+
+export NODE_OPTIONS="--max-old-space-size=4096"
+
+# Run lint-staged to make sure staged files are linted
+npx lint-staged
+npm run type-check
+
+echo '🎉 No error found: committing this now.... ✨🚀🏄‍♂️🍻'

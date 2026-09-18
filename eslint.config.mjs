@@ -1,6 +1,7 @@
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
+import unusedImports from "eslint-plugin-unused-imports";
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -14,7 +15,27 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
   ]),
   {
+    plugins: {
+      "unused-imports": unusedImports,
+    },
     rules: {
+      // Let eslint-plugin-unused-imports own unused symbols (Next enables @typescript-eslint/no-unused-vars).
+      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-explicit-any": "warn",
+      "no-unused-vars": "warn",
+      "react-hooks/set-state-in-effect": "off",
+      "unused-imports/no-unused-imports": ["error"],
+      "unused-imports/no-unused-vars": [
+        "warn",
+        {
+          vars: "all",
+          varsIgnorePattern: "^_",
+          args: "after-used",
+          argsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
+
       "@typescript-eslint/no-explicit-any": "warn",
     },
   },
