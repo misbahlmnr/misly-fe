@@ -121,29 +121,31 @@ function SidebarFooter() {
         </div>
       )}
 
-      <DropdownMenu>
-        <DropdownMenuTrigger className="flex w-full items-center gap-3 rounded-lg p-2 text-left transition-colors duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-surface-container data-popup-open:bg-surface-container">
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-fixed font-headline text-sm font-bold text-primary ink-border">
-            M
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="truncate font-label text-sm font-bold">
-              {currentUser.name}
-            </p>
-            <p className="truncate font-body text-xs text-outline">
-              {isProPlan() ? "Pro Plan" : "Free Plan"}
-            </p>
-          </div>
-          <ChevronsUpDown className="size-5 text-outline" strokeWidth={2} />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          side="top"
-          align="start"
-          className="w-(--anchor-width)"
-        >
-          <LogoutMenuItem />
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <div className="min-w-0">
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex w-full items-center gap-3 rounded-lg p-2 text-left transition-colors duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-surface-container data-popup-open:bg-surface-container">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-fixed font-headline text-sm font-bold text-primary ink-border">
+              {currentUser.name.charAt(0)}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-label text-sm font-bold">
+                {currentUser.name}
+              </p>
+              <p className="truncate font-body text-xs text-outline">
+                {isProPlan() ? "Pro Plan" : "Free Plan"}
+              </p>
+            </div>
+            <ChevronsUpDown className="size-5 text-outline" strokeWidth={2} />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            side="top"
+            align="start"
+            className="w-(--anchor-width)"
+          >
+            <LogoutMenuItem />
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </div>
   );
 }
