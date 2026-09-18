@@ -5,7 +5,7 @@ import {
   type CreateQrPayload,
   type QrCodeItem,
 } from "@/features/qr-codes/schema";
-import { api } from "@/lib/api";
+import { ApiError, api } from "@/lib/api";
 
 export async function getQrCodesOnServer(): Promise<QrCodeItem[]> {
   const data = await api<unknown[]>(restApiPaths.qrCodes.get, {
@@ -19,14 +19,33 @@ export async function getQrCodesOnServer(): Promise<QrCodeItem[]> {
   });
 }
 
-export async function getQrByIdOnServer(id: string) {
-  const items = await getQrCodesOnServer();
-  return items.find((item) => item.id === id);
+export async function getQrCodeByIdOnServer(id: string) {
+  const data = await api<QrCodeItem>(restApiPaths.qrCodes.getById(id), {
+    method: "GET",
+  });
+
+  const parsed = apiQrCodeSchema.safeParse(data);
+
+  if (!parsed.success) throw new ApiError("Invalid QR code data", 400);
+
+  return mapApiQrToQrCodeItem(parsed.data);
 }
 
 export async function createQrCodeOnServer(payload: CreateQrPayload) {
   const data = await api<unknown>(restApiPaths.qrCodes.create, {
     method: "POST",
+    body: JSON.stringify(payload),
+  });
+
+  return mapApiQrToQrCodeItem(apiQrCodeSchema.parse(data));
+}
+
+export async function updateQrCodeOnServer(
+  id: string,
+  payload: CreateQrPayload,
+) {
+  const data = await api<unknown>(restApiPaths.qrCodes.update(id), {
+    method: "PUT",
     body: JSON.stringify(payload),
   });
 

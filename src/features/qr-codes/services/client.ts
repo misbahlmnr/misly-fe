@@ -53,6 +53,30 @@ export async function createQrCodeOnClient(
   return response.data;
 }
 
+export async function getQrCodeByIdOnClient(id: string) {
+  const res = await axios.get<QrCodeItem>(restApiPaths.qrCodes.getById(id), {
+    validateStatus: () => true,
+  });
+
+  return res.data;
+}
+
+export async function updateQrCodeOnClient(
+  id: string,
+  values: CreateQrValues,
+  selectedDestinationUrl?: string,
+) {
+  const payload = toCreateQrPayload(values, selectedDestinationUrl);
+
+  const response = await axios.put<CreateQrApiResponse>(
+    restApiPaths.qrCodes.update(id),
+    payload,
+    { validateStatus: () => true },
+  );
+
+  return response.data;
+}
+
 export async function deleteQrCodeOnClient(id: string) {
   const response = await axios.delete<unknown>(
     restApiPaths.qrCodes.delete(id),
@@ -63,3 +87,5 @@ export async function deleteQrCodeOnClient(id: string) {
 
   return response.data;
 }
+
+export async function createQr() {}

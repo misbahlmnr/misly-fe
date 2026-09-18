@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { CreateQrPage } from "@/features/qr-codes";
-import { getQrByIdOnServer } from "@/features/qr-codes/services/server";
+import { getQrCodeByIdOnServer } from "@/features/qr-codes/services/server";
 import type { QrEditorTab } from "@/features/qr-codes/types";
 
 export async function generateMetadata({
@@ -11,7 +11,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const qr = await getQrByIdOnServer(id);
+  const qr = await getQrCodeByIdOnServer(id);
 
   return {
     title: qr ? `Customize ${qr.title} - Misly` : "Customize QR Code - Misly",
@@ -27,7 +27,7 @@ export default async function Page({
 }) {
   const { id } = await params;
   const { tab } = await searchParams;
-  const qr = await getQrByIdOnServer(id);
+  const qr = await getQrCodeByIdOnServer(id);
 
   if (!qr) notFound();
 

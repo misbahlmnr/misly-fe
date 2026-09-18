@@ -21,8 +21,10 @@ export const restApiPaths = {
   },
   qrCodes: {
     get: "/api/qr-codes",
+    getById: (id: string) => `/api/qr-codes/${id}`,
     create: "/api/qr-codes",
     resolve: (id: string) => `/api/qr-codes/resolve/${id}`,
+    update: (id: string) => `/api/qr-codes/${id}`,
     delete: (id: string) => `/api/qr-codes/${id}`,
   },
 } as const;
