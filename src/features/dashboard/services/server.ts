@@ -1,12 +1,15 @@
 import { restApiPaths } from "@/config/api";
 import { api, ApiError } from "@/lib/api";
 import { mapApiOverview } from "../schema";
-import type { Overview } from "../types";
+import type { Overview, OverviewApiResponse } from "../types";
 
 export const getOverviewOnServer = async (): Promise<Overview> => {
-  const response = await api<unknown>(restApiPaths.overview["backend-get"], {
-    method: "GET",
-  });
+  const response = await api<OverviewApiResponse>(
+    restApiPaths.overview["backend-get"],
+    {
+      method: "GET",
+    },
+  );
 
   try {
     return mapApiOverview(response ?? {});

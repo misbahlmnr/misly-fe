@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import { isProPlan } from "@/config/user";
 import { QrAnalyticsPage } from "@/features/qr-codes";
-import { getQrByIdOnServer } from "@/features/qr-codes/services/server";
+import { getQrCodeByIdOnServer } from "@/features/qr-codes/services/server";
 
 export async function generateMetadata({
   params,
@@ -11,7 +11,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const qr = await getQrByIdOnServer(id);
+  const qr = await getQrCodeByIdOnServer(id);
 
   return {
     title: qr
@@ -26,7 +26,7 @@ export default async function Page({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const qr = await getQrByIdOnServer(id);
+  const qr = await getQrCodeByIdOnServer(id);
 
   if (!qr || !isProPlan()) notFound();
 

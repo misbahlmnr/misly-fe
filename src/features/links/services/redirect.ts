@@ -13,7 +13,7 @@ type ResolveRedirectContext = {
 export async function resolveShortLinkRedirect(
   slug: string,
   context: ResolveRedirectContext = {},
-): Promise<ResolveLink["originalUrl"] | null> {
+): Promise<ResolveLink["destinationUrl"] | null> {
   const query = new URLSearchParams();
 
   const host = context.host;
@@ -51,5 +51,5 @@ export async function resolveShortLinkRedirect(
     return null;
   }
 
-  return parsed.data.originalUrl;
+  return parsed.data.destinationUrl;
 }

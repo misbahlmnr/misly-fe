@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const resolveLinkSchema = z.object({
-  originalUrl: z
+  destinationUrl: z
     .string()
     .trim()
     .min(1)

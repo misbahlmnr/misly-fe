@@ -10,7 +10,7 @@ type ResolveRedirectContext = {
   prefetch?: boolean;
 };
 
-const resolveQrSchema = z.object({ originalUrl: z.string() });
+const resolveQrSchema = z.object({ destinationUrl: z.string() });
 
 export async function resolveQrRedirect(
   id: string,
@@ -51,5 +51,5 @@ export async function resolveQrRedirect(
     return null;
   }
 
-  return parsed.data.originalUrl;
+  return parsed.data.destinationUrl;
 }

@@ -38,6 +38,7 @@ import ApperanceTab from "../components/create-form/apperance-tab";
 import BrandingTab from "../components/create-form/branding-tab";
 import { useQrFormValues } from "../hooks/use-qr-form-values";
 import { useUpdateQrCode } from "../hooks/use-update-qr-code";
+import { ApiLink } from "@/features/links/schema";
 
 export function CreateQrPage({
   mode,
@@ -109,7 +110,7 @@ export function CreateQrPage({
       label: linksLoading ? "Loading links..." : "Select a short link...",
       value: null as string | null,
     },
-    ...links.map((link) => ({
+    ...links.map((link: ApiLink) => ({
       label: `${link.title || link.slug} · /${link.slug}`,
       value: link.id,
     })),
