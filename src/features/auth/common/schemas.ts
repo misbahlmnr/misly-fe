@@ -37,7 +37,16 @@ export const authActionResultSchema = z.object({
   signedIn: z.boolean().optional(),
 });
 
+export const userDataSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
 export type LoginSchema = z.infer<typeof loginSchema>;
 export type RegisterSchema = z.infer<typeof registerSchema>;
 export type AuthTokenData = z.infer<typeof authTokenDataSchema>;
 export type AuthActionResult = z.infer<typeof authActionResultSchema>;
+export type UserData = z.infer<typeof userDataSchema>;

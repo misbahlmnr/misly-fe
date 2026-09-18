@@ -16,14 +16,7 @@ export async function POST(request: Request) {
 
     const result = await registerWithPassword(parsed.data);
 
-    return NextResponse.json(
-      {
-        success: result.success,
-        message: result.message,
-        signedIn: result.signedIn,
-      },
-      { status: result.success ? 200 : 400 },
-    );
+    return NextResponse.json(result, { status: result.success ? 201 : 400 });
   } catch {
     return NextResponse.json(
       { success: false, message: "Registration failed" },

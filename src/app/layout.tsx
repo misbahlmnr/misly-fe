@@ -5,6 +5,7 @@ import { QueryProvider } from "@/components/providers/query-provider";
 import { siteConfig } from "@/config/site";
 
 import "./globals.css";
+import { Toaster } from "sonner";
 
 const workSans = Work_Sans({
   subsets: ["latin"],
@@ -38,6 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         className="flex min-h-full flex-col font-sans selection:bg-tertiary-fixed selection:text-on-tertiary-fixed"
       >
         <QueryProvider>{children}</QueryProvider>
+        <Toaster position="top-center" duration={3000} />
       </body>
     </html>
   );

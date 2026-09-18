@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
@@ -16,6 +16,7 @@ import {
   registerSchema,
   type RegisterSchema,
 } from "@/features/auth/common/schemas";
+import { toast } from "sonner";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -47,9 +48,9 @@ export function RegisterForm() {
       return;
     }
 
-    router.push(result.signedIn ? routes.dashboard : routes.login);
-    router.refresh();
-    router.refresh();
+    toast.success("Account created successfully");
+
+    router.push(routes.login);
   }
 
   return (
@@ -125,8 +126,14 @@ export function RegisterForm() {
           size="lg"
           className="mt-8 w-full text-lg font-headline"
         >
-          Create account
-          <ArrowRight className="size-5" strokeWidth={2.5} />
+          {isSubmitting ? (
+            <Loader2 className="size-5 animate-spin" strokeWidth={2.5} />
+          ) : (
+            <>
+              Create account
+              <ArrowRight className="size-5" strokeWidth={2.5} />
+            </>
+          )}
         </Button>
       </form>
     </div>

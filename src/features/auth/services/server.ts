@@ -5,11 +5,14 @@ import {
   type AuthActionResult,
   LoginSchema,
   RegisterSchema,
+  userDataSchema,
+  UserData,
 } from "@/features/auth/common/schemas";
-import { backendEnvelopeSchema } from "@/lib/schemas/api";
+import { BackendEnvelope, backendEnvelopeSchema } from "@/lib/schemas/api";
 import { publicApi } from "@/lib/api";
 
 const authTokenEnvelopeSchema = backendEnvelopeSchema(authTokenDataSchema);
+const authRegisterEnvelopeSchema = backendEnvelopeSchema(userDataSchema);
 
 function authResult(
   status: number,
@@ -59,36 +62,33 @@ export async function loginWithPassword(
 
 export async function registerWithPassword(
   values: RegisterSchema,
-): Promise<AuthActionResult> {
-  const { status, body: rawBody } = await publicApi(
-    restApiPaths.auth.register,
-    {
-      method: "POST",
-      body: JSON.stringify({
-        name: values.name,
-        email: values.email,
-        password: values.password,
-        confirmPassword: values.confirmPassword,
-      }),
-    },
-  );
+): Promise<BackendEnvelope<UserData>> {
+  const { body: rawBody } = await publicApi(restApiPaths.auth.register, {
+    method: "POST",
+    body: JSON.stringify({
+      name: values.name,
+      email: values.email,
+      password: values.password,
+      confirmPassword: values.confirmPassword,
+    }),
+  });
 
-  const parsed = authTokenEnvelopeSchema.safeParse(rawBody);
+  const parsed = authRegisterEnvelopeSchema.safeParse(rawBody);
   const body = parsed.success
     ? parsed.data
     : { success: false, message: rawBody.message || "Registration failed" };
 
   if (!body.success) {
-    return authResult(status, false, body.message || "Registration failed");
+    return {
+      success: false,
+      message: body.message || "Registration failed",
+      data: undefined,
+    };
   }
 
-  const signedIn = Boolean(body.data?.token);
-  if (signedIn) await storeTokenIfPresent(body.data);
-
-  return authResult(
-    status,
-    true,
-    body.message || "Registration successful",
-    signedIn,
-  );
+  return {
+    success: body.success,
+    message: body.message || "Registration successful",
+    data: body.data,
+  };
 }

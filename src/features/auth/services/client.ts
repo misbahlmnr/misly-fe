@@ -24,18 +24,19 @@ async function postAuth(path: string, body: Record<string, string>) {
   return parsed.data;
 }
 
-export function loginOnClient(values: LoginSchema) {
+export function loginOnClient(payload: LoginSchema) {
   return postAuth("/api/auth/login", {
-    email: values.email,
-    password: values.password,
+    email: payload.email,
+    password: payload.password,
   });
 }
 
-export function registerOnClient(values: RegisterSchema) {
+export function registerOnClient(payload: RegisterSchema) {
   return postAuth("/api/auth/register", {
-    name: values.name,
-    email: values.email,
-    password: values.password,
+    name: payload.name,
+    email: payload.email,
+    password: payload.password,
+    confirmPassword: payload.confirmPassword,
   });
 }
 
