@@ -14,7 +14,7 @@ import { GoogleAuthButton } from "@/features/auth/components/google-auth-button"
 import { PasswordField } from "@/features/auth/components/password-field";
 import {
   registerSchema,
-  type RegisterValues,
+  type RegisterSchema,
 } from "@/features/auth/common/schemas";
 
 export function RegisterForm() {
@@ -24,7 +24,7 @@ export function RegisterForm() {
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm<RegisterValues>({
+  } = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "",
@@ -34,14 +34,15 @@ export function RegisterForm() {
     },
   });
 
-  async function onSubmit(values: RegisterValues) {
+  async function onSubmit(values: RegisterSchema) {
     const result = await registerOnClient({
       name: values.name,
       email: values.email,
       password: values.password,
+      confirmPassword: values.confirmPassword,
     });
 
-    if (!result.ok) {
+    if (!result.success) {
       setError("root", { message: result.message });
       return;
     }

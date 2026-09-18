@@ -1,45 +1,37 @@
 import axios from "axios";
 
 import {
+  LoginSchema,
+  RegisterSchema,
   authActionResultSchema,
-  type LoginValues,
-  type RegisterValues,
 } from "@/features/auth/common/schemas";
 
 async function postAuth(path: string, body: Record<string, string>) {
-  const response = await axios.post(path, body, {
+  const res = await axios.post(path, body, {
     validateStatus: () => true,
   });
 
-  console.log(response);
+  const parsed = authActionResultSchema.safeParse(res.data);
 
-  const parsed = authActionResultSchema.safeParse(response.data);
-  const json = parsed.success
-    ? parsed.data
-    : {
-        ok: response.status >= 200 && response.status < 300,
-        message: "Request failed",
-      };
+  if (!parsed.success) {
+    return {
+      success: false,
+      message: "Request failed",
+      signedIn: false,
+    };
+  }
 
-  const ok = response.status >= 200 && response.status < 300;
-
-  return {
-    ok: ok && json.ok !== false,
-    message: json.message || (ok ? "Success" : "Request failed"),
-    signedIn: Boolean(json.signedIn),
-  };
+  return parsed.data;
 }
 
-export function loginOnClient(values: Pick<LoginValues, "email" | "password">) {
+export function loginOnClient(values: LoginSchema) {
   return postAuth("/api/auth/login", {
     email: values.email,
     password: values.password,
   });
 }
 
-export function registerOnClient(
-  values: Pick<RegisterValues, "name" | "email" | "password">,
-) {
+export function registerOnClient(values: RegisterSchema) {
   return postAuth("/api/auth/register", {
     name: values.name,
     email: values.email,

@@ -25,7 +25,7 @@ const ContentTab = ({
   errors: FieldErrors<CreateQrValues>;
   source: "existing" | "new";
   setValue: UseFormSetValue<CreateQrValues>;
-  linkItems: { label: string; value: string }[];
+  linkItems: { label: string; value: string | null }[];
   linkId: string | null;
   // TODO: fix this type after defining the type in the links schema
   selectedLink: any;

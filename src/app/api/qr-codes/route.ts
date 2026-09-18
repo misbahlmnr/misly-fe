@@ -48,7 +48,7 @@ export async function POST(request: Request) {
   }
 
   const parsed = await parseJsonBody(request, createQrPayloadSchema);
-  if (!parsed.ok) {
+  if (!parsed.success) {
     return NextResponse.json(
       { success: false, message: parsed.message },
       { status: 400 },

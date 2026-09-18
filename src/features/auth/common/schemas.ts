@@ -15,17 +15,11 @@ export const loginSchema = z.object({
   password: passwordSchema,
 });
 
-export const registerRequestSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(2, "Name must be at least 2 characters"),
-  email: emailSchema,
-  password: passwordSchema,
-});
-
-export const registerSchema = registerRequestSchema
-  .extend({
+export const registerSchema = z
+  .object({
+    name: z.string().trim().min(2, "Name must be at least 2 characters"),
+    email: emailSchema,
+    password: passwordSchema,
     confirmPassword: z.string().min(1, "Confirm your password"),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -38,13 +32,12 @@ export const authTokenDataSchema = z.object({
 });
 
 export const authActionResultSchema = z.object({
-  ok: z.boolean(),
+  success: z.boolean(),
   message: z.string(),
   signedIn: z.boolean().optional(),
 });
 
-export type LoginValues = z.infer<typeof loginSchema>;
-export type RegisterValues = z.infer<typeof registerSchema>;
-export type RegisterRequest = z.infer<typeof registerRequestSchema>;
+export type LoginSchema = z.infer<typeof loginSchema>;
+export type RegisterSchema = z.infer<typeof registerSchema>;
 export type AuthTokenData = z.infer<typeof authTokenDataSchema>;
 export type AuthActionResult = z.infer<typeof authActionResultSchema>;

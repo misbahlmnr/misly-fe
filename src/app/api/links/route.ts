@@ -61,7 +61,7 @@ export async function POST(request: Request) {
   }
 
   const parsed = await parseJsonBody(request, createLinkPayloadSchema);
-  if (!parsed.ok) {
+  if (!parsed.success) {
     return NextResponse.json(
       { success: false, message: parsed.message },
       { status: 400 },

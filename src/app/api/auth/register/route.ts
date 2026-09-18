@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
 
-import { registerRequestSchema } from "@/features/auth/common/schemas";
 import { registerWithPassword } from "@/features/auth/services/server";
-import { parseJsonBody } from "@/lib/schemas/api";
+import { registerSchema } from "@/features/auth/types";
 
 export async function POST(request: Request) {
   try {
-    const parsed = await parseJsonBody(request, registerRequestSchema);
-    if (!parsed.ok) {
+    const body = await request.json();
+    const parsed = registerSchema.safeParse(body);
+    if (!parsed.success) {
       return NextResponse.json(
-        { success: false, message: parsed.message },
+        { success: false, message: parsed.error.message },
         { status: 400 },
       );
     }
@@ -18,11 +18,11 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       {
-        success: result.ok,
+        success: result.success,
         message: result.message,
         signedIn: result.signedIn,
       },
-      { status: result.ok ? 200 : 400 },
+      { status: result.success ? 200 : 400 },
     );
   } catch {
     return NextResponse.json(

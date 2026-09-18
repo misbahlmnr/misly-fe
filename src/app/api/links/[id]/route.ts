@@ -59,7 +59,7 @@ export async function PUT(
   }
 
   const parsed = await parseJsonBody(request, updateLinkPayloadSchema);
-  if (!parsed.ok) {
+  if (!parsed.success) {
     return NextResponse.json(
       { success: false, message: parsed.message },
       { status: 400 },

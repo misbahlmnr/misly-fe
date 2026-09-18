@@ -38,7 +38,7 @@ import ApperanceTab from "../components/create-form/apperance-tab";
 import BrandingTab from "../components/create-form/branding-tab";
 import { useQrFormValues } from "../hooks/use-qr-form-values";
 import { useUpdateQrCode } from "../hooks/use-update-qr-code";
-import { ApiLink } from "@/features/links/schema";
+import { ApiLink, ManagedLink } from "@/features/links/schema";
 
 export function CreateQrPage({
   mode,
@@ -84,7 +84,7 @@ export function CreateQrPage({
     format,
   } = useQrFormValues(control);
 
-  const selectedLink = links.find((link) => link.id === linkId);
+  const selectedLink = links.find((link: ManagedLink) => link.id === linkId);
 
   const previewUrl = initial?.id
     ? buildQrScanUrl(initial.id)

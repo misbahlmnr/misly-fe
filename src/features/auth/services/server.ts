@@ -3,8 +3,8 @@ import { setAuthCookie } from "@/features/auth/common/session";
 import {
   authTokenDataSchema,
   type AuthActionResult,
-  type LoginValues,
-  type RegisterValues,
+  LoginSchema,
+  RegisterSchema,
 } from "@/features/auth/common/schemas";
 import { backendEnvelopeSchema } from "@/lib/schemas/api";
 import { publicApi } from "@/lib/api";
@@ -18,7 +18,7 @@ function authResult(
   signedIn = false,
 ): AuthActionResult {
   return {
-    ok: success && status >= 200 && status < 300,
+    success: success && status >= 200 && status < 300,
     message,
     signedIn,
   };
@@ -30,7 +30,7 @@ async function storeTokenIfPresent(data: unknown) {
 }
 
 export async function loginWithPassword(
-  values: Pick<LoginValues, "email" | "password">,
+  values: LoginSchema,
 ): Promise<AuthActionResult> {
   const { status, body: rawBody } = await publicApi(restApiPaths.auth.login, {
     method: "POST",
@@ -58,7 +58,7 @@ export async function loginWithPassword(
 }
 
 export async function registerWithPassword(
-  values: Pick<RegisterValues, "name" | "email" | "password">,
+  values: RegisterSchema,
 ): Promise<AuthActionResult> {
   const { status, body: rawBody } = await publicApi(
     restApiPaths.auth.register,
@@ -68,6 +68,7 @@ export async function registerWithPassword(
         name: values.name,
         email: values.email,
         password: values.password,
+        confirmPassword: values.confirmPassword,
       }),
     },
   );

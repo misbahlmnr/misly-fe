@@ -30,22 +30,22 @@ export type BackendEnvelope<T> = {
 export async function parseJsonBody<T>(
   request: Request,
   schema: z.ZodType<T>,
-): Promise<{ ok: true; data: T } | { ok: false; message: string }> {
+): Promise<{ success: true; data: T } | { success: false; message: string }> {
   let json: unknown;
 
   try {
     json = await request.json();
   } catch {
-    return { ok: false, message: "Invalid request body" };
+    return { success: false, message: "Invalid request body" };
   }
 
   const result = schema.safeParse(json);
   if (!result.success) {
     const message = result.error.issues[0]?.message ?? "Invalid request body";
-    return { ok: false, message };
+    return { success: false, message };
   }
 
-  return { ok: true, data: result.data };
+  return { success: true, data: result.data };
 }
 
 export function parseEnvelope<T>(

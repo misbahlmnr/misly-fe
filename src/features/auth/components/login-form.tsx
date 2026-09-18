@@ -12,7 +12,7 @@ import { routes } from "@/config/routes";
 import { loginOnClient } from "@/features/auth/services/client";
 import { GoogleAuthButton } from "@/features/auth/components/google-auth-button";
 import { PasswordField } from "@/features/auth/components/password-field";
-import { loginSchema, type LoginValues } from "@/features/auth/common/schemas";
+import { LoginSchema, loginSchema } from "@/features/auth/common/schemas";
 
 export function LoginForm() {
   const router = useRouter();
@@ -21,7 +21,7 @@ export function LoginForm() {
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm<LoginValues>({
+  } = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
@@ -29,10 +29,10 @@ export function LoginForm() {
     },
   });
 
-  async function onSubmit(values: LoginValues) {
+  async function onSubmit(values: LoginSchema) {
     const result = await loginOnClient(values);
 
-    if (!result.ok) {
+    if (!result.success) {
       setError("root", { message: result.message });
       return;
     }

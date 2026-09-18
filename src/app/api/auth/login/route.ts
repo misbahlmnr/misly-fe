@@ -2,14 +2,15 @@ import { NextResponse } from "next/server";
 
 import { loginSchema } from "@/features/auth/common/schemas";
 import { loginWithPassword } from "@/features/auth/services/server";
-import { parseJsonBody } from "@/lib/schemas/api";
 
 export async function POST(request: Request) {
   try {
-    const parsed = await parseJsonBody(request, loginSchema);
-    if (!parsed.ok) {
+    const body = await request.json();
+    const parsed = loginSchema.safeParse(body);
+
+    if (!parsed.success) {
       return NextResponse.json(
-        { success: false, message: parsed.message },
+        { success: false, message: parsed.error.message },
         { status: 400 },
       );
     }
@@ -18,15 +19,17 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       {
-        success: result.ok,
+        success: result.success,
         message: result.message,
         signedIn: result.signedIn,
       },
-      { status: result.ok ? 200 : 401 },
+      { status: result.success ? 200 : 401 },
     );
-  } catch {
+  } catch (err) {
+    console.error(err);
+
     return NextResponse.json(
-      { success: false, message: "Login failed" },
+      { success: false, message: "Internal server error" },
       { status: 500 },
     );
   }
