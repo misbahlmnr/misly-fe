@@ -5,13 +5,18 @@ import { useRouter } from "next/navigation";
 
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { routes } from "@/config/routes";
-import { logoutOnClient } from "@/features/auth/services/client";
+import {
+  currentUserQueryKey,
+  logoutOnClient,
+} from "@/features/auth/services/client";
+import { queryClient } from "@/lib/react-query";
 
 export function LogoutMenuItem() {
   const router = useRouter();
 
   async function handleLogout() {
     await logoutOnClient();
+    queryClient.removeQueries({ queryKey: currentUserQueryKey });
     router.push(routes.login);
     router.refresh();
   }

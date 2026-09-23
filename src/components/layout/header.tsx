@@ -1,13 +1,18 @@
-"use client"
+"use client";
 
-import { Menu } from "lucide-react"
-import Link from "next/link"
+import { Menu } from "lucide-react";
+import Link from "next/link";
 
-import { routes } from "@/config/routes"
-import { siteConfig } from "@/config/site"
-import { NotificationPopover } from "@/features/notifications"
+import { routes } from "@/config/routes";
+import { siteConfig } from "@/config/site";
+import { useCurrentUser } from "@/features/auth";
+import { userInitial } from "@/features/auth/common/utils";
+import { NotificationPopover } from "@/features/notifications";
 
 export function Header({ onMenuClick }: { onMenuClick: () => void }) {
+  const { data: user } = useCurrentUser();
+  const initial = userInitial(user);
+
   return (
     <header className="relative z-20 flex h-16 shrink-0 items-center justify-between border-b-2 border-on-surface bg-surface-container-lowest px-6">
       <div className="flex items-center gap-3 md:hidden">
@@ -32,9 +37,9 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
       <div className="flex items-center gap-4">
         <NotificationPopover />
         <div className="flex size-8 items-center justify-center rounded-full bg-primary-fixed font-headline text-xs font-bold text-primary ink-border md:hidden">
-          M
+          {initial}
         </div>
       </div>
     </header>
-  )
+  );
 }

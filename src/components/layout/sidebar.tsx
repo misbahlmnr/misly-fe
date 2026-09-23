@@ -23,8 +23,9 @@ import {
 } from "@/config/navigation";
 import { routes } from "@/config/routes";
 import { siteConfig } from "@/config/site";
-import { currentUser, isProPlan } from "@/config/user";
-import { LogoutMenuItem } from "@/features/auth";
+import { isProPlan } from "@/config/user";
+import { LogoutMenuItem, useCurrentUser } from "@/features/auth";
+import { userDisplayName, userInitial } from "@/features/auth/common/utils";
 import { cn } from "@/lib/utils";
 
 const icons: Record<SidebarIcon, typeof LayoutGrid> = {
@@ -102,6 +103,10 @@ function NavSection({
 }
 
 function SidebarFooter() {
+  const { data: user } = useCurrentUser();
+  const name = user ? userDisplayName(user) : "";
+  const initial = user ? userInitial(user) : "M";
+
   return (
     <div className="space-y-4 border-t-2 border-on-surface p-4">
       {!isProPlan() && (
@@ -125,12 +130,10 @@ function SidebarFooter() {
         <DropdownMenu>
           <DropdownMenuTrigger className="flex w-full items-center gap-3 rounded-lg p-2 text-left transition-colors duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-surface-container data-popup-open:bg-surface-container">
             <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-fixed font-headline text-sm font-bold text-primary ink-border">
-              {currentUser.name.charAt(0)}
+              {initial}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate font-label text-sm font-bold">
-                {currentUser.name}
-              </p>
+              <p className="truncate font-label text-sm font-bold">{name}</p>
               <p className="truncate font-body text-xs text-outline">
                 {isProPlan() ? "Pro Plan" : "Free Plan"}
               </p>

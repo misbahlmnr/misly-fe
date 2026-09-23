@@ -1,27 +1,29 @@
-"use client"
+"use client";
 
-import { User } from "lucide-react"
-import { useRef } from "react"
-import { useForm } from "react-hook-form"
+import { User } from "lucide-react";
+import { useRef } from "react";
+import { useForm } from "react-hook-form";
 
-import { FieldError } from "@/components/shared/field-error"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { currentUser } from "@/config/user"
-import type { ProfileValues } from "@/features/settings/types"
+import { FieldError } from "@/components/shared/field-error";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useCurrentUser } from "@/features/auth";
+import { userInitial } from "@/features/auth/common/utils";
+import type { ProfileValues } from "@/features/settings/types";
 
 export function ProfileInformation() {
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { data: user } = useCurrentUser();
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<ProfileValues>({
-    defaultValues: {
-      name: currentUser.name,
-      email: currentUser.email,
+    values: {
+      name: user?.name ?? "",
+      email: user?.email ?? "",
     },
-  })
+  });
 
   function onSubmit() {}
 
@@ -42,7 +44,7 @@ export function ProfileInformation() {
             <div className="relative h-[160px] w-[130px] shrink-0">
               <div className="absolute inset-0 translate-x-2 translate-y-2 rounded-2xl bg-primary-container ink-border" />
               <div className="relative z-10 flex h-full w-full items-center justify-center rounded-2xl bg-tertiary-fixed font-headline text-5xl font-black text-on-tertiary-fixed ink-border shadow-hard">
-                {currentUser.name.slice(0, 1)}
+                {userInitial(user)}
               </div>
             </div>
             <input
@@ -102,5 +104,5 @@ export function ProfileInformation() {
         </div>
       </form>
     </section>
-  )
+  );
 }

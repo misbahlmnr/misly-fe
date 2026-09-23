@@ -41,8 +41,16 @@ export const userDataSchema = z.object({
   id: z.string(),
   name: z.string(),
   email: z.string(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  createdAt: z
+    .union([z.string(), z.date()])
+    .transform((value) =>
+      typeof value === "string" ? value : value.toISOString(),
+    ),
+  updatedAt: z
+    .union([z.string(), z.date()])
+    .transform((value) =>
+      typeof value === "string" ? value : value.toISOString(),
+    ),
 });
 
 export type LoginSchema = z.infer<typeof loginSchema>;

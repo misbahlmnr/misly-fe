@@ -9,7 +9,7 @@ import {
   UserData,
 } from "@/features/auth/common/schemas";
 import { BackendEnvelope, backendEnvelopeSchema } from "@/lib/schemas/api";
-import { publicApi } from "@/lib/api";
+import { api, ApiError, publicApi } from "@/lib/api";
 
 const authTokenEnvelopeSchema = backendEnvelopeSchema(authTokenDataSchema);
 const authRegisterEnvelopeSchema = backendEnvelopeSchema(userDataSchema);
@@ -91,4 +91,17 @@ export async function registerWithPassword(
     message: body.message || "Registration successful",
     data: body.data,
   };
+}
+
+export async function getCurrentUserOnServer(): Promise<UserData> {
+  const data = await api<unknown>(restApiPaths.auth.me, {
+    method: "GET",
+  });
+
+  const parsed = userDataSchema.safeParse(data);
+  if (!parsed.success) {
+    throw new ApiError("Invalid user data", 502);
+  }
+
+  return parsed.data;
 }

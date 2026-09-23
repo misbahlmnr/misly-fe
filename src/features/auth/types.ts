@@ -13,3 +13,5 @@ export {
   loginSchema,
   registerSchema,
 } from "@/features/auth/common/schemas";
+
+export { userDisplayName, userInitial } from "@/features/auth/common/utils";
