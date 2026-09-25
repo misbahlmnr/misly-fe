@@ -1,6 +1,16 @@
 "use client"
 
-import { Camera, Focus, MoreHorizontal, Smartphone, Tablet } from "lucide-react"
+import {
+  Camera,
+  Focus,
+  Link2,
+  MessageCircle,
+  Monitor,
+  MoreHorizontal,
+  Search,
+  Smartphone,
+  Tablet,
+} from "lucide-react"
 
 import { AnimatedBar } from "@/components/shared/animated-bar"
 import { AnimatedNumber } from "@/components/shared/animated-number"
@@ -17,6 +27,8 @@ const locationBars = [
 const deviceIcons: Record<string, typeof Smartphone> = {
   iphone: Smartphone,
   android: Smartphone,
+  mobile: Smartphone,
+  desktop: Monitor,
   tablet: Tablet,
 }
 
@@ -24,6 +36,9 @@ const sourceIcons: Record<string, typeof Camera> = {
   camera: Camera,
   lens: Focus,
   instagram: Camera,
+  whatsapp: MessageCircle,
+  google: Search,
+  direct: Link2,
   other: MoreHorizontal,
 }
 
@@ -101,6 +116,9 @@ function BreakdownList({
         {title}
       </h3>
       <div className="flex flex-1 flex-col gap-4">
+        {items.length === 0 ? (
+          <p className="text-sm text-on-surface-variant">No data yet.</p>
+        ) : null}
         {items.map((item) => {
           const Icon = item.icon
 

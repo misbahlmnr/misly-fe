@@ -27,5 +27,6 @@ export const restApiPaths = {
     resolve: (id: string) => `/api/qr-codes/resolve/${id}`,
     update: (id: string) => `/api/qr-codes/${id}`,
     delete: (id: string) => `/api/qr-codes/${id}`,
+    stats: (id: string) => `/api/qr-codes/${id}/stats`,
   },
 } as const;

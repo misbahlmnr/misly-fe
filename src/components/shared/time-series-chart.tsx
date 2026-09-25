@@ -84,6 +84,7 @@ export function TimeSeriesChart({
           tickFormatter={(value) => formatAxisDate(String(value), range)}
         />
         <YAxis
+          allowDecimals={false}
           tickLine={false}
           axisLine={false}
           tickMargin={8}

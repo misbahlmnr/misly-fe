@@ -1,13 +1,19 @@
 import axios from "axios";
 
 import { restApiPaths } from "@/config/api";
+import { mapApiQrScanAnalytics } from "@/features/qr-codes/analytics-schema";
 import {
   toCreateQrPayload,
   type CreateQrValues,
   type QrCodeItem,
 } from "@/features/qr-codes/schema";
+import type { QrScanAnalytics } from "@/features/qr-codes/types";
+import type { TimeRange } from "@/lib/time-series";
 
 export const qrCodesQueryKey = ["qr-codes"] as const;
+
+export const qrAnalyticsQueryKey = (qrCodeId: string, range: TimeRange) =>
+  ["qr-analytics", qrCodeId, range] as const;
 
 type QrCodesApiResponse = {
   success: boolean;
@@ -88,4 +94,26 @@ export async function deleteQrCodeOnClient(id: string) {
   return response.data;
 }
 
-export async function createQr() {}
+type QrAnalyticsApiResponse = {
+  success: boolean;
+  message?: string;
+  data?: unknown;
+};
+
+export async function getQrAnalyticsOnClient(
+  qrCodeId: string,
+  range: TimeRange,
+): Promise<QrScanAnalytics> {
+  const response = await axios.get<QrAnalyticsApiResponse>(
+    `${restApiPaths.qrCodes.stats(qrCodeId)}?range=${range}`,
+    { validateStatus: () => true },
+  );
+
+  const body = response.data;
+
+  if (response.status < 200 || response.status >= 300 || !body?.success) {
+    throw new Error(body?.message ?? "Failed to get QR analytics");
+  }
+
+  return mapApiQrScanAnalytics(body.data ?? {}, range);
+}

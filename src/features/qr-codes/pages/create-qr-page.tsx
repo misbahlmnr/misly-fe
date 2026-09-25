@@ -12,7 +12,6 @@ import { routes } from "@/config/routes";
 import {
   DestinationChip,
   EditorTabs,
-  FormatToggle,
 } from "@/features/qr-codes/components/qr-editor-controls";
 import { QrStyledPreview } from "@/features/qr-codes/components/qr-styled-preview";
 import { useCreateQrCode } from "@/features/qr-codes/hooks/use-create-qr-code";
@@ -260,7 +259,7 @@ export function CreateQrPage({
               </p>
               <DestinationChip url={previewUrl} />
 
-              <div className="mt-5 border-t-2 border-dashed border-on-surface pt-5">
+              {/* <div className="mt-5 border-t-2 border-dashed border-on-surface pt-5">
                 <p className="mb-3 font-label text-sm font-bold text-on-surface">
                   Download format
                 </p>
@@ -268,7 +267,7 @@ export function CreateQrPage({
                   value={format}
                   onChange={(next) => setValue("format", next)}
                 />
-              </div>
+              </div> */}
             </div>
           </aside>
         </div>
@@ -293,7 +292,7 @@ export function CreateQrPage({
             ) : (
               <Save className="size-4" strokeWidth={2.5} />
             )}
-            Save & Download QR
+            {mode === "edit" ? "Update QR" : "Save QR"}
           </Button>
         </div>
       </form>
